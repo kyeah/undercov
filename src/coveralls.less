@@ -1,4 +1,4 @@
-td.blob-num.coveralls.coveralls-on{
+td.blob-num.coveralls{
   &.coveralls-hit{
     background-color: #dbffdb;
     border-color: #c1e9c1;
@@ -17,45 +17,45 @@ td.blob-num.coveralls.coveralls-on{
   }
 }
 
-td.blob-code.coveralls.coveralls-on{
-  &.coveralls-hit{
-    background-color: #eaffea;
-  }
-  &.coveralls-missed{
-    background-color: #ffecec;
-  }
-  &.coveralls-partial{
-    background-color: rgb(252, 252, 214);
-  }
-  &.coveralls-null{
-    background-color: #fff;
-  }
-}
+// td.blob-code.coveralls{
+//   &.coveralls-hit{
+//     background-color: #eaffea;
+//   }
+//   &.coveralls-missed{
+//     background-color: #ffecec;
+//   }
+//   &.coveralls-partial{
+//     background-color: rgb(252, 252, 214);
+//   }
+//   &.coveralls-null{
+//     background-color: #fff;
+//   }
+// }
 
 .sha-block.coveralls,
 .sha.coveralls{
   margin: 0 4px;
 }
 
-.file.coveralls-enabled{
-  // hide Diff higlighting when coveralls is enabled
-  .blob-num-addition, .blob-code-addition,
-  .blob-num-deletion, .blob-code-deletion{
+.file {//.coveralls-enabled{
+  // hide num diff higlighting when coveralls is enabled
+  .blob-num-addition, //.blob-code-addition,
+  .blob-num-deletion, { //.blob-code-deletion{
     background-color: inherit;
     border-color: inherit;
   }
 }
 
-.file:not(.coveralls-enabled) .empty-cell.coveralls{
-  // diff/compare show on empty cell diffs
-  &.coveralls-hit{
-    background-color: #34A032;
-  }
-  &.coveralls-partial{
-    background-color: #DADA38;
-  }
-  &.coveralls-missed{
-    background-color: #A03232;
-  }
+// .file:not(.coveralls-enabled) .empty-cell.coveralls{
+//   // diff/compare show on empty cell diffs
+//   &.coveralls-hit{
+//     background-color: #34A032;
+//   }
+//   &.coveralls-partial{
+//     background-color: #DADA38;
+//   }
+//   &.coveralls-missed{
+//     background-color: #A03232;
+//   }
 
-}
+// }
