@@ -11,18 +11,22 @@ class BootStrapper {
   private static preferences: IStorageObject = null;
   private overlay: OverlayWindow = null;
   private storage: ChromeStorage = new ChromeStorage();
+  private url: string = '';
 
   constructor(private context: HTMLDocument) {
     this.initialize();
   }
 
-  private createOverlay(preferences: IStorageObject): OverlayWindow {
+    private createOverlay(preferences: IStorageObject): OverlayWindow {
+      if (this.overlay) {
+            return this.overlay;
+        }
     let doc = document.getElementById('chrome-install-plugin');
     if (doc) {
       doc.style.display = 'none';
     }
-    let url = preferences.debug_url || document.URL;
-    if (!(url.indexOf('https://github.com') < 0)) {
+    this.url = preferences.debug_url || document.URL;
+    if (!(this.url.indexOf('https://github.com') < 0)) {
       return new GithubWindow(preferences, this.storage);
     }
     return null;
@@ -49,15 +53,25 @@ class BootStrapper {
 
     window.addEventListener('message', (event: MessageEvent) => {
       if (event.source === window &&
-          event.data.type &&
-          event.data.type === 'coveralls') {
-            this.overlay.log('::pjax-event-received');
-            return this.overlay.initialize();
+          event.data.type) {
+          if (event.data.type === 'coveralls' || event.data.type === 'url_change') {
+              this.overlay.log('::pjax-event-received');
+              return this.overlay.initialize();
+          }
       }
       return null;
     });
 
-    this.injectListener();
+    setInterval(() => {
+        if (document.URL != this.url) {
+            this.url = document.URL;
+            this.overlay = this.createOverlay(BootStrapper.preferences);
+            this.overlay.log('::hashchange-event-received');
+            return this.overlay.initialize();
+        }
+    }, 1000);
+
+      this.injectListener();
   }
 
   /**
@@ -65,13 +79,13 @@ class BootStrapper {
    */
   private injectListener(): void {
     let listener =  '(' + function () {
-        if ((<any>window).jQuery !== undefined &&
-        ($('meta[property="og:site_name"]').attr('content') === 'GitHub')) {
-          $(document).on('pjax:success', function () {
-            window.postMessage({ type: 'coveralls' }, '*');
-          });
-        }
-      } + ')();';
+      if ((<any>window).jQuery !== undefined &&
+      ($('meta[property="og:site_name"]').attr('content') === 'GitHub')) {
+        $(document).on('pjax:success', function () {
+          window.postMessage({ type: 'coveralls' }, '*');
+        });
+      }
+    } + ')();';
     let script = document.createElement('script');
     let element = document.head || document.documentElement;
 

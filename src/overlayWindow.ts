@@ -5,7 +5,7 @@ import * as Rx from 'rx';
 import Observable = Rx.Observable;
 
 export enum pageType { blob, compare, pull, commit, blame, tree }
-export enum lineType { hit, missed, irrelevant }
+export enum lineType { missed, hit, irrelevant }
 
 export abstract class OverlayWindow {
   protected static baseUrl: string = 'https://coveralls.io/builds';
@@ -29,7 +29,7 @@ export abstract class OverlayWindow {
 
   log(title: string, data?: any): void {
     if (!this.preferences.debugEnabled) {
-      return;
+        //return;
     }
 
     data ? console.log(title, data) : console.log(title);
@@ -53,11 +53,7 @@ export abstract class OverlayWindow {
     this.log('::retrieveCoverage', id);
     this.coverageAvailable = false;
 
-    let split = id.split('/');
-    let url = (split.length > 2) ?
-      `${OverlayWindow.baseUrl}/${split[0]}/source.json?filename=${split.slice(1).join('/')}` :
-      `${OverlayWindow.baseUrl}/${id}.json`;
-
+      let url = '<hardcoding for now lol>';
     this.log('::retrieveCoverage', url);
 
     let settings: JQueryAjaxSettings;
@@ -91,18 +87,20 @@ export abstract class OverlayWindow {
       return;
     }
 
-    let id = this.filePath ? `${this.commitSha}/${this.filePath}` : this.commitSha;
+    let id = this.commitSha;
     this.log('::invalidateOverlay', 'invalidating');
     this.invalidating = true;
 
     const visualize: (coverage: JSON) => void = (coverage: JSON) => {
+      this.log('::visualize', 'saving coverage');
       this.coverage[id] = coverage;
       this.storage.saveCoverage(this.coverage, () => { });
       this.visualizeOverlay(coverage);
     };
 
     this.readCoverageObservable(id).finally(() => {
-      this.invalidating = false;
+        this.invalidating = false;
+        this.log('::IJWOFJA', 'AWDIAOWD');
     }).subscribe(visualize,
       (err: JQueryXHR) => {
         if (err.status === 500) {
@@ -118,22 +116,5 @@ export abstract class OverlayWindow {
       return ((hit / total) * 10000 / 100).toFixed(2);
     }
     return '0';
-  }
-
-  protected generateCoverageMap(coverage: JSON): Array<lineType> {
-    this.coverageAvailable = coverage && coverage !== OverlayWindow.emptyCoverage;
-
-    if (this.coverageAvailable === false) {
-      return null;
-    }
-
-    return $.map(coverage, (element: number) => {
-      if (element === undefined || element === null) {
-        return lineType.irrelevant;
-      } else if (element > 0) {
-        return lineType.hit;
-      }
-      return lineType.missed;
-    });
   }
 }

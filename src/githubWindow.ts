@@ -33,12 +33,11 @@ export default class GithubWindow extends OverlayWindow {
   }
 
   private visualizeCoverage(coverage: JSON): void {
-    let totalHits = 0;
-    let totalLines = 0;
-    const coverageMap = this.generateCoverageMap(coverage);
     const page = this.page;
 
     $('.repository-content .file').each((index: number, elem: Element) => {
+      let totalHits = 0;
+      let totalLines = 0;
       let element = $(elem);
 
       let button = element.find('.btn.coveralls')
@@ -48,36 +47,56 @@ export default class GithubWindow extends OverlayWindow {
                           .unbind()
                           .click(this.toggleFileCoverageVisual);
 
-      if (!this.coverageAvailable) {
+      let filePath = this.filePath ||
+          element.find('.file-info>span[title]').attr('title') ||
+            $('.file-info > a[title]').attr('title');
+
+      const coverageMap = filePath && coverage && coverage[`/container/${filePath}`];
+      if (!coverageMap) {
         button.addClass('disabled');
         button.attr('aria-label', 'File is not reported to Coveralls').text('Not covered');
         return;
       }
 
-      let filePath = this.filePath || element.find('.file-info>span[title]').attr('title');
-      if (filePath) {
-        if (element.find('.file-actions > .btn-group').length === 0) {
-          element.find('.file-actions a:first').wrap('<div class="btn-group"></div>');
+      if (element.find('.file-actions > .btn-group').length === 0) {
+        element.find('.file-actions a:first').wrap('<div class="btn-group"></div>');
+      }
+
+      let _td = `td:eq(${this.page === pageType.blob ? 0 : 1})`;
+
+        const lineCovMap = Object.keys(coverageMap['statementMap'])
+          .map(i => [coverageMap['statementMap'][i], coverageMap['s'][i]])
+          .reduce((map: Object, [statement, s]) => {
+            map[statement.start.line] = s;
+            return map;
+          }, {});
+
+      this.log(JSON.stringify(lineCovMap));
+      element.find('tr:not(.js-expandable-line)').each((index: number, trElement: Element) => {
+        let td = $(trElement).find(_td);
+
+        let lineNumber: number;
+        try {
+            lineNumber = parseInt((td.attr('data-line-number') || (<any>td.attr('id')).split[1]));
+
+            let type = lineCovMap[lineNumber];
+            if (type && type > 1) {
+                type = 1;
+            }
+            if (type !== undefined && type !== lineType.irrelevant) {
+                totalLines++;
+            }
+            if (type === lineType.hit) {
+                totalHits++;
+            }
+
+            td
+                .removeClass('coveralls-hit coveralls-missed coveralls-partial coveralls-irrelevant')
+                .addClass(`coveralls coveralls-${lineType[type]}`);
+        } catch (e) {
+            // yolo
         }
-
-        let _td = `td:eq(${this.page === pageType.blob ? 0 : 1})`;
-
-        element.find('tr').each((index: number, trElement: Element) => {
-          let td = $(trElement).find(_td);
-          let lineNumber: number = parseInt((td.attr('data-line-number') || (<any>td.attr('id')).split[1]));
-
-          let type = coverageMap[lineNumber - 1];
-          if (type !== undefined && type !== lineType.irrelevant) {
-            totalLines++;
-          }
-          if (type === lineType.hit) {
-            totalHits++;
-          }
-
-          $(trElement).find('td')
-            .removeClass('coveralls-hit coveralls-missed coveralls-partial coveralls-irrelevant')
-            .addClass(`coveralls coveralls-${lineType[type]}`);
-        });
+      });
 
         let ratio = OverlayWindow.ratio(totalHits, totalLines);
         if (page === pageType.blob) {
@@ -86,7 +105,6 @@ export default class GithubWindow extends OverlayWindow {
             button.trigger('click');
           }
         }
-      }
     });
   }
 
@@ -96,9 +114,10 @@ export default class GithubWindow extends OverlayWindow {
 
     switch (this.page) {
       case pageType.tree:
-      this.visualizeOverallCoverage(coverage);
+            //this.visualizeOverallCoverage(coverage);
       break;
       case pageType.blob:
+      case pageType.pull:
       this.prepareOverlay();
       this.visualizeCoverage(coverage);
       break;
@@ -117,12 +136,14 @@ export default class GithubWindow extends OverlayWindow {
       let split = $('a[data-hotkey=y]').attr('href').split('/');
       this.filePath = `${split.slice(5).join('/')}`;
       this.log('::acquireReference', this.filePath);
-      ret = split[4];
+      ret = split[6];
     } else if (page === pageType.compare) {
       this.baseSha = `&base=${$('.commit-id:first').text()}`;
       ret = $('.commit-id:last').text();
     } else if (page === pageType.tree) {
       ret = $('.js-permalink-shortcut').attr('href').split('/')[4];
+    } else if (page === pageType.pull) {
+        ret = $('.js-diffbar-commits-list a .select-menu-item-text code').last().text();
     }
 
     this.log('::acquireReference : ', ret);
