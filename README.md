@@ -1,6 +1,7 @@
 # TODO
 
-- [ ] Options for base paths to CI file based on pageType=pull vs other types (and also based on the repository you're in)
+- [] Options for base paths to CI file based on pageType=pull vs other types (and also based on the repository you're in)
+- [] Options and converters for different formats (json, lcov, etc.)
 - [] Performance
 - [x] Fix race condition with setInterval stuff (or find a better solution)
 - [] options for UI (swapping code diff vs blob num highlighting)
