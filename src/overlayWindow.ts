@@ -94,15 +94,15 @@ export abstract class OverlayWindow {
     const visualize: (coverage: JSON) => void = (coverage: JSON) => {
       this.log('::visualize', 'saving coverage')
 
-      const converters = {
-          'json': (coverage) => {
-              return Object.keys(coverage['statementMap'])
-                  .map(i => [coverage['statementMap'][i], coverageMap['s'][i]])
-                  .reduce((map: Object, [statement, s]) => {
-                      map[statement.start.line] = s
-                      return map
-                  }, {})
-          }
+      const converters: any = {
+        'json': (coverage: JSON) => {
+          return Object.keys(coverage['statementMap'])
+            .map(i => [coverage['statementMap'][i], coverage['s'][i]])
+            .reduce((map: Object, [statement, s]) => {
+              map[statement.start.line] = s
+              return map
+            }, {})
+        }
       }
 
       this.coverage[id] = converters['json'](coverage)

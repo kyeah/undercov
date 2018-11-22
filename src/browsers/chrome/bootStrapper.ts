@@ -17,10 +17,10 @@ class BootStrapper {
     this.initialize()
   }
 
-    private createOverlay(preferences: IStorageObject): OverlayWindow {
-      if (this.overlay) {
-            return this.overlay
-        }
+  private createOverlay(preferences: IStorageObject): OverlayWindow {
+    if (this.overlay) {
+      return this.overlay
+    }
     let doc = document.getElementById('chrome-install-plugin')
     if (doc) {
       doc.style.display = 'none'
@@ -54,7 +54,7 @@ class BootStrapper {
     window.addEventListener('message', (event: MessageEvent) => {
       if (event.source === window &&
           event.data.type) {
-          if (event.data.type === 'coveralls' || event.data.type === 'url_change') {
+          if (event.data.type === 'pcov' || event.data.type === 'url_change') {
               this.overlay.log('::pjax-event-received')
               return this.overlay.initialize()
           }
@@ -62,16 +62,9 @@ class BootStrapper {
       return null
     })
 
-    setInterval(() => {
-        if (document.URL != this.url) {
-            this.url = document.URL
-            this.overlay = this.createOverlay(BootStrapper.preferences)
-            this.overlay.log('::hashchange-event-received')
-            return this.overlay.initialize()
-        }
-    }, 1000)
-
+    if (!(this.url.indexOf('https://github.com') < 0)) {
       this.injectListener()
+    }
   }
 
   /**
@@ -79,13 +72,11 @@ class BootStrapper {
    */
   private injectListener(): void {
     let listener =  '(' + function () {
-      if ((<any>window).jQuery !== undefined &&
-      ($('meta[property="og:site_name"]').attr('content') === 'GitHub')) {
-        $(document).on('pjax:success', function () {
-          window.postMessage({ type: 'coveralls' }, '*')
-        })
-      }
+      document.addEventListener("pjax:success", function(){
+        window.postMessage({ type: 'pcov' }, '*')
+      })
     } + ')();'
+
     let script = document.createElement('script')
     let element = document.head || document.documentElement
 
