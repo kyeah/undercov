@@ -65,6 +65,29 @@ export abstract class OverlayWindow {
     return Rx.Observable.fromPromise($.when($.ajax(url, settings)))
   }
 
+  private convertJsonFileCoverage(coverage: JSON): Object {
+    return Object.keys(coverage['statementMap'])
+      .map(i => [coverage['statementMap'][i], coverage['s'][i]])
+      .reduce((res: Object, [statement, s]) => {
+        res[statement.start.line] = s
+        return res
+      }, {})
+  }
+
+  protected converters: { [key: string]: (coverage: JSON) => Object; } = {
+    'json': (coverage: JSON) => {
+      let res: Object = {}
+      for (const filename in coverage) {
+        if (coverage[filename]['statementMap']) {
+          res[filename] = this.convertJsonFileCoverage(coverage[filename])
+        } else {
+          this.log("::convert json - no statement map", filename)
+        }
+      }
+      return res
+    }
+  }
+
   private readCoverageObservable(id: string): Observable<JSON> {
     const stored = this.coverage[id]
     if (stored) {
@@ -72,12 +95,9 @@ export abstract class OverlayWindow {
     }
 
     let observable = Observable.fromCallback<any>(this.storage.loadCoverage)
-    return observable(this.coverage, id).map(x => {
-      if (!x) {
-        return this.retrieveCoverageObservable(id)
-      } else {
-        return x
-      }
+    return observable(this.coverage, id).map(cachedCoverage => {
+      return cachedCoverage || this.retrieveCoverageObservable(id)
+        .map(coverage => coverage && this.converters['json'](coverage))
     }).concatAll()
   }
 
@@ -93,19 +113,7 @@ export abstract class OverlayWindow {
 
     const visualize: (coverage: JSON) => void = (coverage: JSON) => {
       this.log('::visualize', 'saving coverage')
-
-      const converters: any = {
-        'json': (coverage: JSON) => {
-          return Object.keys(coverage['statementMap'])
-            .map(i => [coverage['statementMap'][i], coverage['s'][i]])
-            .reduce((map: Object, [statement, s]) => {
-              map[statement.start.line] = s
-              return map
-            }, {})
-        }
-      }
-
-      this.coverage[id] = converters['json'](coverage)
+      this.coverage[id] = coverage
       this.storage.saveCoverage(this.coverage, () => { })
       this.visualizeOverlay(this.coverage[id])
     }
