@@ -1,4 +1,5 @@
 {
+  "extends": ["standard"],
   "rules": {
     "curly": true,
     "eofline": false,
@@ -8,9 +9,7 @@
     "max-line-length": [true, 150],
     "no-consecutive-blank-lines": true,
     "no-trailing-whitespace": true,
-    "no-duplicate-key": true,
     "no-duplicate-variable": true,
-    "no-unreachable": true,
     "no-var-keyword": true,
     "one-line": [true,
       "check-else",
@@ -19,7 +18,7 @@
     "quotemark": [true,
       "single",
       "avoid-escape"],
-    "semicolon": true,
+    "semicolon": [true, "never"],
     "typedef-whitespace": [true, {
       "call-signature": "nospace",
       "index-signature": "nospace",
