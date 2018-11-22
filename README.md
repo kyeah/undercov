@@ -1,3 +1,14 @@
+# TODO
+
+- Options for base paths to CI file based on pageType=pull vs other types (and also based on the repository you're in)
+- Performance
+- Fix race condition with setInterval stuff (or find a better solution)
+- options for UI (swapping code diff vs blob num highlighting)
+- fix button toggle or just remove it
+- fix pageType=tree visualize overall coverage
+- fix showing ratios for each file
+- combine app+tools reports (probably lcov + lcov > genhtml + json; should look at how istanbul implements this)
+
 # coveralls-overlay (DEPREACATED)
 **I'm not using coveralls in general for my work project, not able to spend time to update plugin with new github UI changes.**
 

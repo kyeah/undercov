@@ -64,14 +64,6 @@ export default class GithubWindow extends OverlayWindow {
 
       let _td = `td:eq(${this.page === pageType.blob ? 0 : 1})`;
 
-        const lineCovMap = Object.keys(coverageMap['statementMap'])
-          .map(i => [coverageMap['statementMap'][i], coverageMap['s'][i]])
-          .reduce((map: Object, [statement, s]) => {
-            map[statement.start.line] = s;
-            return map;
-          }, {});
-
-      this.log(JSON.stringify(lineCovMap));
       element.find('tr:not(.js-expandable-line)').each((index: number, trElement: Element) => {
         let td = $(trElement).find(_td);
 
@@ -79,7 +71,7 @@ export default class GithubWindow extends OverlayWindow {
         try {
             lineNumber = parseInt((td.attr('data-line-number') || (<any>td.attr('id')).split[1]));
 
-            let type = lineCovMap[lineNumber];
+            let type = coverageMap[lineNumber];
             if (type && type > 1) {
                 type = 1;
             }

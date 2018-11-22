@@ -53,7 +53,7 @@ export abstract class OverlayWindow {
     this.log('::retrieveCoverage', id);
     this.coverageAvailable = false;
 
-      let url = '<hardcoding for now lol>';
+    let url = 'https://ci.qpp-utilities.navahq.com/job/qpp-submissions-api/job/master/App_Coverage_Report/coverage-final.json';
     this.log('::retrieveCoverage', url);
 
     let settings: JQueryAjaxSettings;
@@ -93,14 +93,25 @@ export abstract class OverlayWindow {
 
     const visualize: (coverage: JSON) => void = (coverage: JSON) => {
       this.log('::visualize', 'saving coverage');
-      this.coverage[id] = coverage;
+
+      const converters = {
+          'json': (coverage) => {
+              return Object.keys(coverage['statementMap'])
+                  .map(i => [coverage['statementMap'][i], coverageMap['s'][i]])
+                  .reduce((map: Object, [statement, s]) => {
+                      map[statement.start.line] = s;
+                      return map;
+                  }, {});
+          }
+      }
+
+      this.coverage[id] = converters['json'](coverage);
       this.storage.saveCoverage(this.coverage, () => { });
-      this.visualizeOverlay(coverage);
+      this.visualizeOverlay(this.coverage[id]);
     };
 
     this.readCoverageObservable(id).finally(() => {
         this.invalidating = false;
-        this.log('::IJWOFJA', 'AWDIAOWD');
     }).subscribe(visualize,
       (err: JQueryXHR) => {
         if (err.status === 500) {
