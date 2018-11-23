@@ -2,8 +2,8 @@ export interface IStorageObject {
   overlayEnabled: boolean
   debugEnabled: boolean
   debug_url: any
-  urls: Array<any>
-  setupUrl(url: string): void
+  branchUrlTemplate: string
+  prUrlTemplate: string
 }
 
 export class StorageObject implements IStorageObject {
@@ -28,18 +28,25 @@ export class StorageObject implements IStorageObject {
     return false
   }
 
-  get urls(): Array<string> {
-    return this._urls
+  get branchUrlTemplate(): string {
+    return this._branchUrlTemplate
   }
 
-  setupUrl(url: string): void {
-    let href = (this.debug_url || document.URL).split('/')
-    if (href.length > 2 && href[2].indexOf('github.com') > 0) {
-      this._urls.push('https://coveralls.io')
-    }
+  set branchUrlTemplate(value: string): string {
+    this._branchUrlTemplate = value
+  }
+
+  get prUrlTemplate(): string {
+    return this._prUrlTemplate
+  }
+
+  set prUrlTemplate(value: string): string {
+    this._prUrlTemplate = value
   }
 
   constructor(private _overlayEnabled: boolean = true,
-              private _debugEnabled: boolean = false) {
+              private _debugEnabled: boolean = false,
+              private _branchUrlTemplate: string = '',
+              private _prUrlTemplate: string = '') {
   }
 }

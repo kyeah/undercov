@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Coveralls overlay</title>
+  <title>Undercov</title>
   <style>
     body { padding: 10px; }
   </style>
@@ -9,14 +9,14 @@
 
 <body>
   <div>
-    <input type="text" id="branch" placeholder="https://example.com/artifacts/coverage/branches/${branchName}/coverage.json">
-    <label>URL Template for branch coverage (using ${branchName})</label>
+    <input type="text" id="branch" placeholder="https://example.com/artifacts/coverage/branches/$1/coverage.json">
+    <label>URL Template for branch coverage (using $1 as branch name)</label>
   </div>
   <br>
 
   <div>
-    <input type="text" id="pr" placeholder="https://example.com/artifacts/coverage/prs/PR-${pullID}/coverage.json">
-    <label>URL Template for PR coverage (using ${pullID})</label>
+    <input type="text" id="pr" placeholder="https://example.com/artifacts/coverage/prs/PR-$1/coverage.json">
+    <label>URL Template for PR coverage (using $1 as pull request ID)</label>
   </div>
   <br>
 
@@ -35,7 +35,7 @@
   <button id="save">Save Changes</button>
   <span id="status"></span>
 
-  <p style="font-family:monospace;color:grey">Source code available at <a href="https://github.com/kyeah/coveralls-overlay">github</a></p>
+  <p style="font-family:monospace;color:grey">Source code available at <a href="https://github.com/kyeah/undercov">github</a></p>
   <script src="options.js"></script>
 </body>
 </html>
