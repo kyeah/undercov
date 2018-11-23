@@ -29,7 +29,7 @@ export abstract class OverlayWindow {
 
   log(title: string, data?: any): void {
     if (!this.preferences.debugEnabled) {
-        return;
+        return
     }
 
     data ? console.log(title, data) : console.log(title)
@@ -46,7 +46,7 @@ export abstract class OverlayWindow {
     if (this.coverageID) {
       this.invalidateOverlay()
     }
-  }    
+  }
 
   private retrieveCoverageObservable(id: string): Observable<JSON> {
     this.log('::retrieveCoverage', id)
@@ -87,7 +87,7 @@ export abstract class OverlayWindow {
         if (coverage[filename]['statementMap']) {
           res[filename] = this.convertJsonFileCoverage(coverage[filename])
         } else {
-          this.log("::convert json - no statement map", filename)
+          this.log('::convert json - no statement map', filename)
         }
       }
       return res
