@@ -10,8 +10,10 @@ class Options {
 
   private restoreState(): void {
     Options.storage.loadOption((value: IStorageObject) => {
-      (<HTMLInputElement>document.getElementById('overlay')).checked = value.overlayEnabled;
+      (<HTMLInputElement>document.getElementById('overlay')).checked = value.overlayEnabled
       (<HTMLInputElement>document.getElementById('debug')).checked = value.debugEnabled
+      (<HTMLInputElement>document.getElementById('branch')).value = value.branchUrlTemplate
+      (<HTMLInputElement>document.getElementById('pr')).value = value.prUrlTemplate
     })
   }
 
@@ -20,8 +22,10 @@ class Options {
   }
 
   private saveOptions(event: MouseEvent): void {
-    let overlayEnabled = (<HTMLInputElement>document.getElementById('overlay')).checked
-    let debugEnabled = (<HTMLInputElement>document.getElementById('debug')).checked
+    const overlayEnabled = (<HTMLInputElement>document.getElementById('overlay')).checked
+    const debugEnabled = (<HTMLInputElement>document.getElementById('debug')).checked
+    const branchUrlTemplate = (<HTMLInputElement>document.getElementById('branch')).value
+    const prUrlTemplate = (<HTMLInputElement>document.getElementById('pr')).value
 
     Options.storage.saveOption(overlayEnabled, debugEnabled, () => {
       let status = document.getElementById('status')

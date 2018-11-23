@@ -9,6 +9,18 @@
 
 <body>
   <div>
+    <input type="text" id="branch" placeholder="https://example.com/artifacts/coverage/branches/${branchName}/coverage.json">
+    <label>URL Template for branch coverage (using ${branchName})</label>
+  </div>
+  <br>
+
+  <div>
+    <input type="text" id="pr" placeholder="https://example.com/artifacts/coverage/prs/PR-${pullID}/coverage.json">
+    <label>URL Template for PR coverage (using ${pullID})</label>
+  </div>
+  <br>
+
+  <div>
     <input type="checkbox" id="overlay">
     <label>Enable coverage overlay</label>
   </div>
@@ -23,7 +35,7 @@
   <button id="save">Save Changes</button>
   <span id="status"></span>
 
-  <p style="font-family:monospace;color:grey">Source code available at <a href="https://github.com/kwonoj/coveralls-overlay">github</a></p>
+  <p style="font-family:monospace;color:grey">Source code available at <a href="https://github.com/kyeah/coveralls-overlay">github</a></p>
   <script src="options.js"></script>
 </body>
 </html>
