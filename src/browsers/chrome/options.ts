@@ -21,7 +21,7 @@ class Options {
     window.document.getElementById('save').addEventListener('click', this.saveOptions)
   }
 
-  private saveOptions(event: MouseEvent): void {
+  private saveOptions(): void {
     const overlayEnabled = (<HTMLInputElement>document.getElementById('overlay')).checked
     const debugEnabled = (<HTMLInputElement>document.getElementById('debug')).checked
     const branchUrlTemplate = (<HTMLInputElement>document.getElementById('branch')).value

@@ -9,42 +9,42 @@ export default class GithubWindow extends OverlayWindow {
 
   // TODO: fix this (iterate over all files in the tree, calculate covered percentage)
   // maybe i should do this calculation up front...
-  private visualizeOverallCoverage(coverage: JSON): void {
-    const changed: number = (<any>coverage)['coverage_change']
-    const overall: number = (<any>coverage)['covered_percent']
+  // private visualizeOverallCoverage(coverage: JSON): void {
+  //   const changed: number = (<any>coverage)['coverage_change']
+  //   const overall: number = (<any>coverage)['covered_percent']
 
-    const changedPrefix: string = changed > 0 ? '+' : ''
-    const formatString: string = `${overall.toFixed(2)}%,
-                                ${changedPrefix}${changed}`
+  //   const changedPrefix: string = changed > 0 ? '+' : ''
+  //   const formatString: string = `${overall.toFixed(2)}%,
+  //                               ${changedPrefix}${changed}`
 
-//    $('.commit-tease .right').append(`<a href="${OverlayWindow.baseUrl}/${this.commitSha}"
-//      class="sha-block coveralls coveralls-removable tooltipped tooltipped-n" aria-label="Overall coverage">
-//      ${formatString}%</a>`)
-  }
+  //   $('.commit-tease .right').append(`<a href="${OverlayWindow.baseUrl}/${this.commitSha}"
+  //     class="sha-block coveralls coveralls-removable tooltipped tooltipped-n" aria-label="Overall coverage">
+  //     ${formatString}%</a>`)
+  // }
 
-  private toggleFileCoverageVisual(event: MouseEvent): void {
-    if (event.shiftKey) {
-      window.open($(this).attr('data-coveralls-url'), '_blank')
-    } else if ($('.coveralls.coveralls-on:first').length === 0) {
-      $('.coveralls').addClass('coveralls-on')
-      $(this).addClass('selected')
-    } else {
-      $('.coveralls').removeClass('coveralls-on')
-      $(this).removeClass('selected')
-    }
-  }
+  // private toggleFileCoverageVisual(event: MouseEvent): void {
+  //   if (event.shiftKey) {
+  //     window.open($(this).attr('data-coveralls-url'), '_blank')
+  //   } else if ($('.coveralls.coveralls-on:first').length === 0) {
+  //     $('.coveralls').addClass('coveralls-on')
+  //     $(this).addClass('selected')
+  //   } else {
+  //     $('.coveralls').removeClass('coveralls-on')
+  //     $(this).removeClass('selected')
+  //   }
+  // }
 
   private visualizeCoverage(coverage: JSON): void {
     const page = this.page
 
-    $('.repository-content .file').each((index: number, elem: Element) => {
+    for (const elem of $('.repository-content .file')) {
       let totalHits = 0
       let totalLines = 0
       const element = $(elem)
 
       const filePath = this.filePath ||
-          element.find('.file-info>span[title]').attr('title') ||
-            $('.file-info > a[title]').attr('title')
+        element.find('.file-info>span[title]').attr('title') ||
+        $('.file-info > a[title]').attr('title')
 
       const coverageMap = filePath && coverage && coverage[`/container/${filePath}`]
       if (!coverageMap) {
@@ -57,40 +57,40 @@ export default class GithubWindow extends OverlayWindow {
 
       const _td = `td:eq(${this.page === pageType.blob ? 0 : 1})`
 
-      element.find('tr:not(.js-expandable-line)').each((index: number, trElement: Element) => {
+      for (const trElement of element.find('tr:not(.js-expandable-line)')) {
         const td = $(trElement).find(_td)
 
         let lineNumber: number
         try {
-            lineNumber = parseInt((td.attr('data-line-number') || (<any>td.attr('id')).split[1]))
+          lineNumber = parseInt((td.attr('data-line-number') || (<any>td.attr('id')).split[1]))
 
-            let type = coverageMap[lineNumber]
-            if (type && type > 1) {
-                type = 1
-            }
-            if (type !== undefined && type !== lineType.irrelevant) {
-                totalLines++
-            }
-            if (type === lineType.hit) {
-                totalHits++
-            }
-
-            td
-                .removeClass('coveralls-hit coveralls-missed coveralls-partial coveralls-irrelevant')
-                .addClass(`coveralls coveralls-${lineType[type]}`)
-        } catch (e) {
-            // yolo
-        }
-      })
-
-        const ratio = OverlayWindow.ratio(totalHits, totalLines)
-        if (page === pageType.blob) {
-          // button.text(`Coverage ${ratio}%`)
-          if (this.preferences.overlayEnabled) {
-            // button.trigger('click')
+          let type = coverageMap[lineNumber]
+          if (type && type > 1) {
+            type = 1
           }
+          if (type !== undefined && type !== lineType.irrelevant) {
+            totalLines++
+          }
+          if (type === lineType.hit) {
+            totalHits++
+          }
+
+          td
+            .removeClass('coveralls-hit coveralls-missed coveralls-partial coveralls-irrelevant')
+            .addClass(`coveralls coveralls-${lineType[type]}`)
+        } catch (e) {
+          this.log('::visualizeCoverage', 'error: ${e}')
         }
-    })
+      }
+
+      // const ratio = OverlayWindow.ratio(totalHits, totalLines)
+      // if (page === pageType.blob) {
+      //   button.text(`Coverage ${ratio}%`)
+      //   if (this.preferences.overlayEnabled) {
+      //     button.trigger('click')
+      //   }
+      // }
+    }
   }
 
   protected visualizeOverlay(coverage: JSON): void {
@@ -99,13 +99,13 @@ export default class GithubWindow extends OverlayWindow {
 
     switch (this.page) {
       case pageType.tree:
-            //this.visualizeOverallCoverage(coverage);
-      break
+        //this.visualizeOverallCoverage(coverage);
+        break
       case pageType.blob:
       case pageType.pull:
-      this.prepareOverlay()
-      this.visualizeCoverage(coverage)
-      break
+        this.prepareOverlay()
+        this.visualizeCoverage(coverage)
+        break
     }
   }
 
@@ -139,7 +139,7 @@ export default class GithubWindow extends OverlayWindow {
 
         element.find('.file-actions > .btn-group')
           .prepend('<a class="btn btn-sm coveralls disabled tooltipped tooltipped-n" ' +
-          'aria-label="Requesting coverage from Coveralls" data-hotkey="c">Coverage loading...</a>')
+                   'aria-label="Requesting coverage from Coveralls" data-hotkey="c">Coverage loading...</a>')
       }
     })
   }

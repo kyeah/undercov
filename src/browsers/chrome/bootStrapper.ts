@@ -12,7 +12,7 @@ class BootStrapper {
   private storage: ChromeStorage = new ChromeStorage()
   private url: string = ''
 
-  constructor(private context: HTMLDocument) {
+  constructor() {
     this.initialize()
   }
 
