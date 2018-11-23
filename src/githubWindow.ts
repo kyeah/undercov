@@ -17,9 +17,9 @@ export default class GithubWindow extends OverlayWindow {
     let formatString: string = `${overall.toFixed(2)}%,
                                 ${changedPrefix}${changed}`
 
-    $('.commit-tease .right').append(`<a href="${OverlayWindow.baseUrl}/${this.commitSha}"
-      class="sha-block coveralls coveralls-removable tooltipped tooltipped-n" aria-label="Overall coverage">
-      ${formatString}%</a>`)
+//    $('.commit-tease .right').append(`<a href="${OverlayWindow.baseUrl}/${this.commitSha}"
+//      class="sha-block coveralls coveralls-removable tooltipped tooltipped-n" aria-label="Overall coverage">
+//      ${formatString}%</a>`)
   }
 
   private toggleFileCoverageVisual(event: MouseEvent): void {
@@ -42,21 +42,12 @@ export default class GithubWindow extends OverlayWindow {
       let totalLines = 0
       let element = $(elem)
 
-      let button = element.find('.btn.coveralls')
-                          .attr('aria-label', 'Toggle Coveralls, shift+click to open new page in Coveralls')
-                          .attr('data-coveralls-url', `${OverlayWindow.baseUrl}/${this.commitSha}/source?filename=${this.filePath}`)
-                          .removeClass('disabled')
-                          .unbind()
-                          .click(this.toggleFileCoverageVisual)
-
       let filePath = this.filePath ||
           element.find('.file-info>span[title]').attr('title') ||
             $('.file-info > a[title]').attr('title')
 
       const coverageMap = filePath && coverage && coverage[`/container/${filePath}`]
       if (!coverageMap) {
-        button.addClass('disabled')
-        button.attr('aria-label', 'File is not reported to Coveralls').text('Not covered')
         return
       }
 
@@ -94,9 +85,9 @@ export default class GithubWindow extends OverlayWindow {
 
         let ratio = OverlayWindow.ratio(totalHits, totalLines)
         if (page === pageType.blob) {
-          button.text(`Coverage ${ratio}%`)
+          // button.text(`Coverage ${ratio}%`)
           if (this.preferences.overlayEnabled) {
-            button.trigger('click')
+            // button.trigger('click')
           }
         }
     })

@@ -32,7 +32,7 @@ export class StorageObject implements IStorageObject {
     return this._branchUrlTemplate
   }
 
-  set branchUrlTemplate(value: string): string {
+  set branchUrlTemplate(value: string) {
     this._branchUrlTemplate = value
   }
 
@@ -40,7 +40,7 @@ export class StorageObject implements IStorageObject {
     return this._prUrlTemplate
   }
 
-  set prUrlTemplate(value: string): string {
+  set prUrlTemplate(value: string) {
     this._prUrlTemplate = value
   }
 

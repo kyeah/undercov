@@ -36,7 +36,6 @@ export abstract class OverlayWindow {
   }
 
   initialize(): void {
-    this.preferences.setupUrl(document.URL)
     let href = (this.preferences.debug_url || document.URL).split('/')
     this.log('::initialize', href)
 
@@ -53,12 +52,12 @@ export abstract class OverlayWindow {
     this.log('::retrieveCoverage', id)
     this.coverageAvailable = false
 
-    let url
+    let url: string
     if (this.page === pageType.pull) {
-      url = this.preferences.prUrlTemplate.replace('$1', coverageID)
+      url = this.preferences.prUrlTemplate.replace('$1', this.coverageID)
     } else {
       // TODO: filter out any pageType that will probably error
-      url = this.preferences.branchUrlTemplate.replace('$1', coverageID)
+      url = this.preferences.branchUrlTemplate.replace('$1', this.coverageID)
     }
 
     this.log('::retrieveCoverage', url)

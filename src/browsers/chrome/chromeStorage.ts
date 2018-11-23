@@ -22,7 +22,13 @@ export class ChromeStorage implements ISyncStorage {
     })
   }
 
-  saveOption(overlayEnabled: boolean, debugEnabled: boolean, callback: () => void): void {
+  saveOption(
+    overlayEnabled: boolean,
+    debugEnabled: boolean,
+    branchUrlTemplate: string,
+    prUrlTemplate: string,
+    callback: () => void
+  ): void {
     chrome.storage.sync.set({
       overlayEnabled,
       debugEnabled,
