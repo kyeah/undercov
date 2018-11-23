@@ -11,7 +11,7 @@ export abstract class OverlayWindow {
   protected static baseUrl: string = 'https://coveralls.io/builds'
   protected static emptyCoverage: JSON = JSON.parse('{}')
   protected filePath: string = null
-  protected commitSha: string = null
+  protected coverageID: string = null
   protected baseSha: string = null
   protected page: pageType = null
   protected owner: string = null
@@ -29,7 +29,7 @@ export abstract class OverlayWindow {
 
   log(title: string, data?: any): void {
     if (!this.preferences.debugEnabled) {
-        //return;
+        return;
     }
 
     data ? console.log(title, data) : console.log(title)
@@ -42,18 +42,25 @@ export abstract class OverlayWindow {
 
     this.owner = `${href[3]}/${href[4]}`
     this.page = (<any>pageType)[href[5]]
-    this.commitSha = this.acquireReference(href)
+    this.coverageID = this.acquireReference(href)
 
-    if (this.commitSha) {
+    if (this.coverageID) {
       this.invalidateOverlay()
     }
-  }
+  }    
 
   private retrieveCoverageObservable(id: string): Observable<JSON> {
     this.log('::retrieveCoverage', id)
     this.coverageAvailable = false
 
-    
+    let url
+    if (this.page === pageType.pull) {
+      url = this.preferences.prUrlTemplate.replace('$1', coverageID)
+    } else {
+      // TODO: filter out any pageType that will probably error
+      url = this.preferences.branchUrlTemplate.replace('$1', coverageID)
+    }
+
     this.log('::retrieveCoverage', url)
 
     let settings: JQueryAjaxSettings
@@ -107,7 +114,7 @@ export abstract class OverlayWindow {
       return
     }
 
-    let id = this.commitSha
+    let id = this.coverageID
     this.log('::invalidateOverlay', 'invalidating')
     this.invalidating = true
 

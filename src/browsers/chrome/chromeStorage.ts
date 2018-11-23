@@ -5,21 +5,30 @@ import { ISyncStorage } from '../../syncStorage'
 export class ChromeStorage implements ISyncStorage {
   loadOption(callback: (preferences: IStorageObject) => void): void {
     chrome.storage.sync.get({
-        overlayEnabled: true,
-        debugEnabled: false
-      }, (items: any) => {
-        if (items['overlayEnabled'] === undefined) {
-          items['overlayEnabled'] = true
-        }
-        callback(new StorageObject(items['overlayEnabled'], items['debugEnabled']))
-      })
+      overlayEnabled: true,
+      debugEnabled: false,
+      branchUrlTemplate: '',
+      prUrlTemplate: ''
+    }, (items: any) => {
+      if (items['overlayEnabled'] === undefined) {
+        items['overlayEnabled'] = true
+      }
+      callback(new StorageObject(
+        items['overlayEnabled'],
+        items['debugEnabled'],
+        items['branchUrlTemplate'],
+        items['prUrlTemplate']
+      ))
+    })
   }
 
   saveOption(overlayEnabled: boolean, debugEnabled: boolean, callback: () => void): void {
     chrome.storage.sync.set({
-        overlayEnabled: overlayEnabled,
-        debugEnabled: debugEnabled
-      }, callback)
+      overlayEnabled,
+      debugEnabled,
+      branchUrlTemplate,
+      prUrlTemplate
+    }, callback)
   }
 
   loadCoverage(value: any, id: string, callback: (coverage: JSON) => void): void {
