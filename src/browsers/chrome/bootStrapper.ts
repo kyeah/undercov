@@ -17,7 +17,7 @@ class BootStrapper {
   }
 
   private createOverlay(preferences: IStorageObject): OverlayWindow {
-    let doc = document.getElementById('chrome-install-plugin')
+    const doc = document.getElementById('chrome-install-plugin')
     if (doc) {
       doc.style.display = 'none'
     }
@@ -67,14 +67,14 @@ class BootStrapper {
    * Inject listener script into document
    */
   private injectListener(): void {
-    let listener =  '(' + function () {
+    const listener =  '(' + function () {
       document.addEventListener('pjax:success', function() {
         window.postMessage({ type: 'pcov' }, '*')
       })
     } + ')();'
 
-    let script = document.createElement('script')
-    let element = document.head || document.documentElement
+    const script = document.createElement('script')
+    const element = document.head || document.documentElement
 
     script.textContent = listener
     element.appendChild(script)
@@ -83,5 +83,5 @@ class BootStrapper {
 }
 
 $(() => {
-  new BootStrapper(this)
+  return new BootStrapper(this)
 })

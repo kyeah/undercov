@@ -12,6 +12,7 @@ export class StorageObject implements IStorageObject {
   get overlayEnabled(): boolean {
     return this._overlayEnabled
   }
+
   set overlayEnabled(value: boolean) {
     this._overlayEnabled = value
   }

@@ -38,7 +38,7 @@ export class ChromeStorage implements ISyncStorage {
 
   loadCoverage(value: any, id: string, callback: (coverage: JSON) => void): void {
     chrome.storage.local.get(value, (items: any) => {
-      let value = items[id]
+      const value = items[id]
       if (callback) {
         callback(value)
       }
