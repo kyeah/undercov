@@ -1,4 +1,3 @@
-/// <reference path="../../../typings/tsd.d.ts"/>
 import { IStorageObject, StorageObject } from '../../storageObject'
 import { ISyncStorage } from '../../syncStorage'
 

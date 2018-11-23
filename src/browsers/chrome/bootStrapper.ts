@@ -1,4 +1,3 @@
-/// <reference path="../../../typings/tsd.d.ts"/>
 import GithubWindow from '../../githubWindow'
 import { OverlayWindow } from '../../overlayWindow'
 import { ChromeStorage } from './chromeStorage'

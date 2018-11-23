@@ -12,7 +12,6 @@
     "suppressImplicitAnyIndexErrors": true
    },
    "files": [
-    "typings/tsd.d.ts",
     "src/overlayWindow.ts",
     "src/githubWindow.ts",
     "src/storageObject.ts",

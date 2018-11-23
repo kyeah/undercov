@@ -26,6 +26,9 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/kyeah/undercov",
   "devDependencies": {
+    "@types/chrome": "0.0.75",
+    "@types/jquery": "3.3.22",
+    "@types/rx": "4.1.1",
     "browserify": "16.2.3",
     "exorcist": "1.0.1",
     "jquery": "3.3.1",
