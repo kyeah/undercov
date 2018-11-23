@@ -7,6 +7,8 @@ export default class GithubWindow extends OverlayWindow {
     super(preferences, storage)
   }
 
+  // TODO: fix this (iterate over all files in the tree, calculate covered percentage)
+  // maybe i should do this calculation up front...
   private visualizeOverallCoverage(coverage: JSON): void {
     let changed: number = (<any>coverage)['coverage_change']
     let overall: number = (<any>coverage)['covered_percent']
@@ -121,25 +123,14 @@ export default class GithubWindow extends OverlayWindow {
     const page = this.page
     this.log('::acquireReference ', 'pageType ' + pageType[page])
 
-    // TODO: get most recent commit/reference in tree for certain pageTypes
-    //       ; and get the PR latest otherwise
-    //       ; actually this should just be a master/or PR check, not an actual commit reference...
-    //       ; for certain outdated files, they may have received more coverage with additional testing
-    //       ; and those commits won't always have coverage anyways, esp if they are old (deleted old cov files for space)
-    //       ; or not part of master/a PR
-    //       ; so we should always get the latest file for that branch or PR, grrr
-    //       ; ok but what if we're viewing a subset of PR commits ? ? ?
     let ret: string = null
-    if (page === pageType.commit || page === pageType.blob || page === pageType.pull) {
+    if (page === pageType.commit || page === pageType.blob || page === pageType.tree || page === pageType.pull) {
       // return the commit, branch, or pull request ID
       ret = value[6]
     } else if (page === pageType.compare) {
       // keep commit shas for now, idk
       this.baseSha = `&base=${$('.commit-id:first').text()}`
       ret = $('.commit-id:last').text()
-    } else if (page === pageType.tree) {
-      // give up right now, idk
-      ret = $('.js-permalink-shortcut').attr('href').split('/')[4]
     }
 
     this.log('::acquireReference : ', ret)
