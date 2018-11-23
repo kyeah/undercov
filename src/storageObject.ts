@@ -7,8 +7,6 @@ export interface IStorageObject {
 }
 
 export class StorageObject implements IStorageObject {
-  private _urls: Array<string> = []
-
   get overlayEnabled(): boolean {
     return this._overlayEnabled
   }

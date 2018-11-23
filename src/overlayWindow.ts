@@ -27,7 +27,7 @@ export abstract class OverlayWindow {
 
   log(title: string, data?: any): void {
     if (!this.preferences.debugEnabled) {
-        return
+      return
     }
 
     data ? console.log(title, data) : console.log(title)
@@ -123,13 +123,13 @@ export abstract class OverlayWindow {
     }
 
     this.readCoverageObservable(id).finally(() => {
-        this.invalidating = false
+      this.invalidating = false
     }).subscribe(visualize,
-      (err: JQueryXHR) => {
-        if (err.status === 500) {
-          visualize(OverlayWindow.emptyCoverage)
-        }
-    })
+                 (err: JQueryXHR) => {
+                   if (err.status === 500) {
+                     visualize(OverlayWindow.emptyCoverage)
+                   }
+                 })
   }
 
   protected static ratio(hit: number, total: number): string {

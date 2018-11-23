@@ -1,4 +1,4 @@
-import { IStorageObject, StorageObject } from './storageObject'
+import { IStorageObject } from './storageObject'
 
 export interface ISyncStorage {
   loadOption(callback: (preferences: IStorageObject) => void): void

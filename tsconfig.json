@@ -5,10 +5,13 @@
     "inlineSourceMap": true,
     "inlineSources": true,
     "declaration": true,
-    "target": "ES5",
+    "target": "ES6",
     "outDir": "dist/build",
     "module": "commonjs",
     "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "suppressImplicitAnyIndexErrors": true
    },
    "files": [
