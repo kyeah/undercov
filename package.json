@@ -2,17 +2,11 @@
   "name": "coveralls-overlay",
   "version": "0.0.2",
   "description": "Chrome extension to overlay coveralls code coverage",
-  "main": "",
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
-    }
-  },
   "scripts": {
     "postinstall": "tsd install",
     "build": "npm run lint:src && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint:src": "tslint -c .tslintrc src/githubWindow.ts src/overlayWindow.ts src/browsers/chrome/bootStrapper.ts src/browsers/chrome/options.ts src/browsers/chrome/chromeStorage.ts src/storageObject.ts src/syncStorage.ts",
+    "lint:src": "tslint src/githubWindow.ts src/overlayWindow.ts src/browsers/chrome/bootStrapper.ts src/browsers/chrome/options.ts src/browsers/chrome/chromeStorage.ts src/storageObject.ts src/syncStorage.ts",
     "commit": "git-cz",
     "package:init": "rm -rf dist/chrome && mkdir \"dist/chrome\" && mkdir \"dist/chrome/lib\"",
     "package:less": "lessc src/coveralls.less dist/chrome/lib/coveralls.css",
@@ -26,22 +20,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kwonoj/coveralls-overlay"
+    "url": "https://github.com/kyeah/undercov"
   },
-  "author": "OJ Kwon <kwon.ohjoong@gmail.com>",
+  "author": "Kevin Yeh <kevinyeah@utexas.edu>",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/kwonoj/coveralls-overlay",
+  "homepage": "https://github.com/kyeah/undercov",
   "devDependencies": {
-    "browserify": "12.0.1",
-    "commitizen": "2.4.6",
-    "cz-conventional-changelog": "1.1.4",
-    "exorcist": "0.4.0",
-    "jquery": "2.1.4",
-    "less": "2.5.3",
-    "rx": "4.0.7",
+    "browserify": "16.2.3",
+    "exorcist": "1.0.1",
+    "jquery": "3.3.1",
+    "less": "3.8.1",
+    "rx": "4.1.0",
     "rx-jquery": "1.1.7",
     "tsd": "0.6.5",
-    "tslint": "2.5.1",
-    "typescript": "1.7.3"
+    "tslint": "5.11.0",
+    "typescript": "3.1.6"
   }
 }
