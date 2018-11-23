@@ -33,7 +33,7 @@ class Options {
       branchUrlTemplate,
       prUrlTemplate,
       () => {
-        let status = document.getElementById('status')
+        const status = document.getElementById('status')
         status.textContent = 'Options saved.'
         setTimeout(() => { status.textContent = '' }, 750)
       }
@@ -42,5 +42,5 @@ class Options {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  new Options()
+  return new Options()
 })

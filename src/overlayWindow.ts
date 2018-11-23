@@ -7,7 +7,6 @@ export enum pageType { blob, compare, pull, commit, blame, tree }
 export enum lineType { missed, hit, irrelevant }
 
 export abstract class OverlayWindow {
-  protected static baseUrl: string = 'https://coveralls.io/builds'
   protected static emptyCoverage: JSON = JSON.parse('{}')
   protected filePath: string = null
   protected coverageID: string = null
@@ -35,7 +34,7 @@ export abstract class OverlayWindow {
   }
 
   initialize(): void {
-    let href = (this.preferences.debug_url || document.URL).split('/')
+    const href = (this.preferences.debug_url || document.URL).split('/')
     this.log('::initialize', href)
 
     this.owner = `${href[3]}/${href[4]}`
@@ -81,7 +80,7 @@ export abstract class OverlayWindow {
 
   protected converters: { [key: string]: (coverage: JSON) => Object; } = {
     'json': (coverage: JSON) => {
-      let res: Object = {}
+      const res: Object = {}
       for (const filename in coverage) {
         if (coverage[filename]['statementMap']) {
           res[filename] = this.convertJsonFileCoverage(coverage[filename])
@@ -99,7 +98,7 @@ export abstract class OverlayWindow {
       return Observable.of(stored)
     }
 
-    let observable = Observable.fromCallback<any>(this.storage.loadCoverage)
+    const observable = Observable.fromCallback<any>(this.storage.loadCoverage)
     return observable(this.coverage, id).map(cachedCoverage => {
       return cachedCoverage || this.retrieveCoverageObservable(id)
         .map(coverage => coverage && this.converters['json'](coverage))
@@ -112,7 +111,7 @@ export abstract class OverlayWindow {
       return
     }
 
-    let id = this.coverageID
+    const id = this.coverageID
     this.log('::invalidateOverlay', 'invalidating')
     this.invalidating = true
 

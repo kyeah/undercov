@@ -10,11 +10,11 @@ export default class GithubWindow extends OverlayWindow {
   // TODO: fix this (iterate over all files in the tree, calculate covered percentage)
   // maybe i should do this calculation up front...
   private visualizeOverallCoverage(coverage: JSON): void {
-    let changed: number = (<any>coverage)['coverage_change']
-    let overall: number = (<any>coverage)['covered_percent']
+    const changed: number = (<any>coverage)['coverage_change']
+    const overall: number = (<any>coverage)['covered_percent']
 
-    let changedPrefix: string = changed > 0 ? '+' : ''
-    let formatString: string = `${overall.toFixed(2)}%,
+    const changedPrefix: string = changed > 0 ? '+' : ''
+    const formatString: string = `${overall.toFixed(2)}%,
                                 ${changedPrefix}${changed}`
 
 //    $('.commit-tease .right').append(`<a href="${OverlayWindow.baseUrl}/${this.commitSha}"
@@ -40,9 +40,9 @@ export default class GithubWindow extends OverlayWindow {
     $('.repository-content .file').each((index: number, elem: Element) => {
       let totalHits = 0
       let totalLines = 0
-      let element = $(elem)
+      const element = $(elem)
 
-      let filePath = this.filePath ||
+      const filePath = this.filePath ||
           element.find('.file-info>span[title]').attr('title') ||
             $('.file-info > a[title]').attr('title')
 
@@ -55,10 +55,10 @@ export default class GithubWindow extends OverlayWindow {
         element.find('.file-actions a:first').wrap('<div class="btn-group"></div>')
       }
 
-      let _td = `td:eq(${this.page === pageType.blob ? 0 : 1})`
+      const _td = `td:eq(${this.page === pageType.blob ? 0 : 1})`
 
       element.find('tr:not(.js-expandable-line)').each((index: number, trElement: Element) => {
-        let td = $(trElement).find(_td)
+        const td = $(trElement).find(_td)
 
         let lineNumber: number
         try {
@@ -83,7 +83,7 @@ export default class GithubWindow extends OverlayWindow {
         }
       })
 
-        let ratio = OverlayWindow.ratio(totalHits, totalLines)
+        const ratio = OverlayWindow.ratio(totalHits, totalLines)
         if (page === pageType.blob) {
           // button.text(`Coverage ${ratio}%`)
           if (this.preferences.overlayEnabled) {
@@ -130,7 +130,7 @@ export default class GithubWindow extends OverlayWindow {
 
   protected prepareOverlay(): void {
     $('.repository-content .file').each((index: number, elem: Element) => {
-      let element = $(elem)
+      const element = $(elem)
       if (element.find('.btn.coveralls').length === 0) {
         if (element.find('.file-actions > .btn-group').length === 0) {
           element.find('.file-actions a:first')
