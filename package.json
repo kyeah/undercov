@@ -7,7 +7,6 @@
     "build": "npm run lint:src && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint:src": "tslint src/githubWindow.ts src/overlayWindow.ts src/browsers/chrome/bootStrapper.ts src/browsers/chrome/options.ts src/browsers/chrome/chromeStorage.ts src/storageObject.ts src/syncStorage.ts",
-    "commit": "git-cz",
     "package:init": "rm -rf dist/chrome && mkdir \"dist/chrome\" && mkdir \"dist/chrome/lib\"",
     "package:less": "lessc src/coveralls.less dist/chrome/lib/coveralls.css",
     "package:options:chrome": "browserify -d dist/build/browsers/chrome/options.js dist/build/browsers/chrome/chromeStorage.js dist/build/storageObject.js dist/build/syncStorage.js | exorcist dist/chrome/lib/options.js.map > dist/chrome/lib/options.js",
