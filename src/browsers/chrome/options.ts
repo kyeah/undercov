@@ -10,9 +10,9 @@ class Options {
 
   private restoreState(): void {
     Options.storage.loadOption((value: IStorageObject) => {
-      (<HTMLInputElement>document.getElementById('overlay')).checked = value.overlayEnabled
-      (<HTMLInputElement>document.getElementById('debug')).checked = value.debugEnabled
-      (<HTMLInputElement>document.getElementById('branch')).value = value.branchUrlTemplate
+      (<HTMLInputElement>document.getElementById('overlay')).checked = value.overlayEnabled;
+      (<HTMLInputElement>document.getElementById('debug')).checked = value.debugEnabled;
+      (<HTMLInputElement>document.getElementById('branch')).value = value.branchUrlTemplate;
       (<HTMLInputElement>document.getElementById('pr')).value = value.prUrlTemplate
     })
   }
@@ -27,11 +27,17 @@ class Options {
     const branchUrlTemplate = (<HTMLInputElement>document.getElementById('branch')).value
     const prUrlTemplate = (<HTMLInputElement>document.getElementById('pr')).value
 
-    Options.storage.saveOption(overlayEnabled, debugEnabled, () => {
-      let status = document.getElementById('status')
-      status.textContent = 'Options saved.'
-      setTimeout(() => { status.textContent = '' }, 750)
-    })
+    Options.storage.saveOption(
+      overlayEnabled,
+      debugEnabled,
+      branchUrlTemplate,
+      prUrlTemplate,
+      () => {
+        let status = document.getElementById('status')
+        status.textContent = 'Options saved.'
+        setTimeout(() => { status.textContent = '' }, 750)
+      }
+    )
   }
 }
 
