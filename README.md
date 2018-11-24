@@ -8,9 +8,8 @@ Chrome extension to overlay code coverage reports from an arbitrary HTTP source 
 # TODO
 
 - [ ] Options to support multiple repos
-- [ ] Options and converters for different formats (json, lcov, etc.)
+- [ ] Options and converters for different formats (lcov, cobertura, coveralls, code-cov, etc.)
 - [ ] options for UI (swapping code diff vs blob num highlighting)
 - [ ] fix pageType=tree visualize overall coverage
 - [ ] fix showing ratios for each file
-- [ ] combine app+tools reports (probably lcov + lcov > genhtml + json; should look at how istanbul implements this)
-- [ ] retrieve report by commit (need to export artifacts to a dummy project)
+- [ ] clickthrough button to html src, if available (helps to see more detail on partial hits)
