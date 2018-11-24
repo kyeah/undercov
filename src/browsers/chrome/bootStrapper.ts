@@ -33,7 +33,7 @@ class BootStrapper {
     if (BootStrapper.preferences) {
       this.setupOverlay(BootStrapper.preferences)
     } else {
-      this.storage.loadOption(this.setupOverlay)
+      this.storage.loadOption(prefs => this.setupOverlay(prefs))
     }
   }
 
