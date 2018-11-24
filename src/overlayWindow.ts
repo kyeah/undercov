@@ -3,7 +3,7 @@ import { ISyncStorage } from './syncStorage'
 import { Observable } from 'rx'
 
 export enum pageType { blob, compare, pull, commit, blame, tree }
-export enum lineType { missed, hit, irrelevant }
+export enum lineType { missed, hit, irrelevant, partial }
 
 export abstract class OverlayWindow {
   protected static emptyCoverage: JSON = JSON.parse('{}')
@@ -74,7 +74,7 @@ export abstract class OverlayWindow {
     const fns = Object.keys(coverage['fnMap'])
       .map(i => [coverage['fnMap'][i].loc, coverage['f'][i]])
 
-    return [...statements, ...fns]
+    const res = [...statements, ...fns]
       .reduce((res: Object, [location, hits]) => {
         const start = location.start.line
         const end = location.end.line
@@ -85,6 +85,27 @@ export abstract class OverlayWindow {
         }
         return res
       }, {})
+
+    const flatZip = (a: [any], b: [any]): any[] => {
+      return a.map((val, i) => [val, b[i]]).reduce((acc, val) => acc.concat(val), [])
+    }
+
+    return Object.keys(coverage['branchMap'])
+      .map(i => flatZip(coverage['branchMap'][i].locations, coverage['b'][i]))
+      .reduce((res: Object, [location, hits]) => {
+        const start = location.start.line
+        const end = location.end.line
+
+        const lines = Array.from(Array(end - start + 1)).map((_, i) => start + i)
+        for (const line of lines) {
+          if (res[line] !== undefined && res[line] !== 0 && hits === 0) {
+            // line has hits, but a branch on this line has zero hits
+            // indicate a partial hit
+            res[line] = -1
+          }
+        }
+        return res
+      }, res)
   }
 
   protected converters: { [key: string]: (coverage: JSON) => JSON; } = {
