@@ -67,6 +67,14 @@ export abstract class OverlayWindow {
     return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
   }
 
+  private range(start: number, end: number): number[] {
+    return Array.from(Array(end - start + 1)).map((_, i) => start + i)
+  }
+
+  private zip(a: [any], b: [any]): any[] {
+    return a.map((val, i) => [val, b[i]])
+  }
+
   private convertJsonFileCoverage(coverage: JSON): Object {
     const statements = Object.keys(coverage['statementMap'])
       .map(i => [coverage['statementMap'][i], coverage['s'][i]])
@@ -79,26 +87,26 @@ export abstract class OverlayWindow {
         const start = location.start.line
         const end = location.end.line
 
-        const lines = Array.from(Array(end - start + 1)).map((_, i) => start + i)
+        const lines = this.range(start, end)
         for (const line of lines) {
-          res[line] = hits
+          if (res[line] !== 0) {
+            res[line] = hits
+          }
         }
         return res
       }, {})
 
-    const flatZip = (a: [any], b: [any]): any[] => {
-      return a.map((val, i) => [val, b[i]]).reduce((acc, val) => acc.concat(val), [])
-    }
-
     return Object.keys(coverage['branchMap'])
-      .map(i => flatZip(coverage['branchMap'][i].locations, coverage['b'][i]))
+      .filter(i => coverage['branchMap'][i].type !== 'if')
+      .map(i => this.zip(coverage['branchMap'][i].locations, coverage['b'][i]))
+      .reduce((acc: any[], val: any[]) => acc.concat(val), [])
       .reduce((res: Object, [location, hits]) => {
         const start = location.start.line
         const end = location.end.line
 
-        const lines = Array.from(Array(end - start + 1)).map((_, i) => start + i)
+        const lines = this.range(start, end)
         for (const line of lines) {
-          if (res[line] !== undefined && res[line] !== 0 && hits === 0) {
+          if (res[line] && hits === 0) {
             // line has hits, but a branch on this line has zero hits
             // indicate a partial hit
             res[line] = -1
