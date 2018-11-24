@@ -71,14 +71,20 @@ export abstract class OverlayWindow {
     return Object.keys(coverage['statementMap'])
       .map(i => [coverage['statementMap'][i], coverage['s'][i]])
       .reduce((res: Object, [statement, s]) => {
-        res[statement.start.line] = s
+        const start = statement.start.line
+        const end = statement.end.line
+
+        const lines = Array.from(Array(end - start + 1)).map((_, i) => start + i)
+        for (const line of lines) {
+          res[line] = s
+        }
         return res
       }, {})
   }
 
-  protected converters: { [key: string]: (coverage: JSON) => Object; } = {
+  protected converters: { [key: string]: (coverage: JSON) => JSON; } = {
     'json': (coverage: JSON) => {
-      const res: Object = {}
+      const res: JSON = JSON.parse('{}')
       for (const filename in coverage) {
         if (coverage[filename]['statementMap']) {
           res[filename] = this.convertJsonFileCoverage(coverage[filename])
