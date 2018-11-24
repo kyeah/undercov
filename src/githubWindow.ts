@@ -22,29 +22,20 @@ export default class GithubWindow extends OverlayWindow {
   //     ${formatString}%</a>`)
   // }
 
-  // private toggleFileCoverageVisual(event: MouseEvent): void {
-  //   if (event.shiftKey) {
-  //     window.open($(this).attr('data-coveralls-url'), '_blank')
-  //   } else if ($('.coveralls.coveralls-on:first').length === 0) {
-  //     $('.coveralls').addClass('coveralls-on')
-  //     $(this).addClass('selected')
-  //   } else {
-  //     $('.coveralls').removeClass('coveralls-on')
-  //     $(this).removeClass('selected')
-  //   }
-  // }
-
   private visualizeCoverage(coverage: JSON): void {
-    const page = this.page
-
     for (const elem of $('.repository-content .file')) {
-      let totalHits = 0
-      let totalLines = 0
+      // let totalHits = 0
+      // let totalLines = 0
       const element = $(elem)
 
-      const filePath = this.filePath ||
-        element.find('.file-info>span[title]').attr('title') ||
-        $('.file-info > a[title]').attr('title')
+      let filePath
+      if (this.page === pageType.blob) {
+        const split = $('a[data-hotkey=y]').attr('href')!.split('/')
+        filePath = `${split.slice(5).join('/')}`
+      } else {
+        filePath = element.find('.file-info>span[title]').attr('title') ||
+          $('.file-info > a[title]').attr('title')
+      }
 
       const coverageMap = filePath && coverage && coverage[`/container/${filePath}`]
       if (!coverageMap) {
@@ -68,12 +59,12 @@ export default class GithubWindow extends OverlayWindow {
           if (type && type > 1) {
             type = 1
           }
-          if (type !== undefined && type !== lineType.irrelevant) {
-            totalLines++
-          }
-          if (type === lineType.hit) {
-            totalHits++
-          }
+          // if (type !== undefined && type !== lineType.irrelevant) {
+          //   totalLines++
+          // }
+          // if (type === lineType.hit) {
+          //   totalHits++
+          // }
 
           td
             .removeClass('coveralls-hit coveralls-missed coveralls-partial coveralls-irrelevant')
@@ -103,44 +94,23 @@ export default class GithubWindow extends OverlayWindow {
         break
       case pageType.blob:
       case pageType.pull:
-        this.prepareOverlay()
         this.visualizeCoverage(coverage)
         break
     }
   }
 
-  protected acquireReference(value: string[]): string {
-    this.filePath = null
-    const page = this.page
+  protected acquireReference(page: pageType, value: string[]): string | void {
     this.log('::acquireReference ', 'pageType ' + pageType[page])
 
-    let ret: string = null
     if (page === pageType.commit || page === pageType.blob || page === pageType.tree || page === pageType.pull) {
       // return the commit, branch, or pull request ID
-      ret = value[6]
+      this.log('::acquireReference ', value[6])
+      return value[6]
     } else if (page === pageType.compare) {
       // keep commit shas for now, idk
       this.baseSha = `&base=${$('.commit-id:first').text()}`
-      ret = $('.commit-id:last').text()
+      this.log('::acquireReference ', $('.commit-id:last').text())
+      return $('.commit-id:last').text()
     }
-
-    this.log('::acquireReference : ', ret)
-    return ret
-  }
-
-  protected prepareOverlay(): void {
-    $('.repository-content .file').each((index: number, elem: Element) => {
-      const element = $(elem)
-      if (element.find('.btn.coveralls').length === 0) {
-        if (element.find('.file-actions > .btn-group').length === 0) {
-          element.find('.file-actions a:first')
-            .wrap('<div class="btn-group"></div>')
-        }
-
-        element.find('.file-actions > .btn-group')
-          .prepend('<a class="btn btn-sm coveralls disabled tooltipped tooltipped-n" ' +
-                   'aria-label="Requesting coverage from Coveralls" data-hotkey="c">Coverage loading...</a>')
-      }
-    })
   }
 }
