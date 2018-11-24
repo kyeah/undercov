@@ -18,7 +18,7 @@ class Options {
   }
 
   private bindBehaviors(): void {
-    window.document.getElementById('save').addEventListener('click', this.saveOptions)
+    window.document.getElementById('save')!.addEventListener('click', this.saveOptions)
   }
 
   private saveOptions(): void {
@@ -34,8 +34,8 @@ class Options {
       prUrlTemplate,
       () => {
         const status = document.getElementById('status')
-        status.textContent = 'Options saved.'
-        setTimeout(() => { status.textContent = '' }, 750)
+        status!.textContent = 'Options saved.'
+        setTimeout(() => { status!.textContent = '' }, 750)
       }
     )
   }

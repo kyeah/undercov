@@ -1,24 +1,20 @@
 import { IStorageObject } from './storageObject'
 import { ISyncStorage } from './syncStorage'
-import * as Rx from 'rx'
-import Observable = Rx.Observable
+import { Observable } from 'rx'
 
 export enum pageType { blob, compare, pull, commit, blame, tree }
 export enum lineType { missed, hit, irrelevant }
 
 export abstract class OverlayWindow {
   protected static emptyCoverage: JSON = JSON.parse('{}')
-  protected filePath: string = null
-  protected coverageID: string = null
-  protected baseSha: string = null
-  protected page: pageType = null
-  protected owner: string = null
+  protected coverageID?: string
+  protected baseSha?: string
+  protected page?: pageType
   protected coverageAvailable: boolean = false
   protected invalidating: boolean = false
   protected coverage: { [key: string]: JSON; } = { }
 
-  protected abstract acquireReference(value: string[]): string
-  protected abstract prepareOverlay(): void
+  protected abstract acquireReference(page: pageType, value: string[]): string | void | undefined
   protected abstract visualizeOverlay(value: any): void
 
   constructor(protected preferences: IStorageObject, private storage: ISyncStorage) {
@@ -37,9 +33,12 @@ export abstract class OverlayWindow {
     const href = (this.preferences.debug_url || document.URL).split('/')
     this.log('::initialize', href)
 
-    this.owner = `${href[3]}/${href[4]}`
     this.page = (<any>pageType)[href[5]]
-    this.coverageID = this.acquireReference(href)
+
+    let ref = this.acquireReference(this.page!, href)
+    if (ref) {
+      this.coverageID = ref
+    }
 
     if (this.coverageID) {
       this.invalidateOverlay()
@@ -52,10 +51,10 @@ export abstract class OverlayWindow {
 
     let url: string
     if (this.page === pageType.pull) {
-      url = this.preferences.prUrlTemplate.replace('$1', this.coverageID)
+      url = this.preferences.prUrlTemplate.replace('$1', this.coverageID!)
     } else {
       // TODO: filter out any pageType that will probably error
-      url = this.preferences.branchUrlTemplate.replace('$1', this.coverageID)
+      url = this.preferences.branchUrlTemplate.replace('$1', this.coverageID!)
     }
 
     this.log('::retrieveCoverage', url)
@@ -66,7 +65,7 @@ export abstract class OverlayWindow {
       dataType: 'json'
     }
 
-    return Rx.Observable.fromPromise($.when($.ajax(url, settings)))
+    return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
   }
 
   private convertJsonFileCoverage(coverage: JSON): Object {
@@ -111,11 +110,11 @@ export abstract class OverlayWindow {
       return
     }
 
-    const id = this.coverageID
+    const id = this.coverageID!
     this.log('::invalidateOverlay', 'invalidating')
     this.invalidating = true
 
-    const visualize: (coverage: JSON) => void = (coverage: JSON) => {
+    const visualize: (id: string) => (coverage: JSON) => void = (id: string) => (coverage: JSON) => {
       this.log('::visualize', 'saving coverage')
       this.coverage[id] = coverage
       this.storage.saveCoverage(this.coverage, () => { })
@@ -124,10 +123,10 @@ export abstract class OverlayWindow {
 
     this.readCoverageObservable(id).finally(() => {
       this.invalidating = false
-    }).subscribe(visualize,
+    }).subscribe(visualize(id),
                  (err: JQueryXHR) => {
                    if (err.status === 500) {
-                     visualize(OverlayWindow.emptyCoverage)
+                     visualize(id)(OverlayWindow.emptyCoverage)
                    }
                  })
   }

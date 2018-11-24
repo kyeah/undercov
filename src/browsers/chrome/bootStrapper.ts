@@ -7,8 +7,8 @@ import { IStorageObject } from '../../storageObject'
  * Initialize overlay window instance when document is loaded.
  */
 class BootStrapper {
-  private static preferences: IStorageObject = null
-  private overlay: OverlayWindow = null
+  private static preferences?: IStorageObject
+  private overlay?: OverlayWindow
   private storage: ChromeStorage = new ChromeStorage()
   private url: string = ''
 
@@ -16,46 +16,41 @@ class BootStrapper {
     this.initialize()
   }
 
-  private createOverlay(preferences: IStorageObject): OverlayWindow {
+  private createOverlay(preferences: IStorageObject): void {
     const doc = document.getElementById('chrome-install-plugin')
     if (doc) {
       doc.style.display = 'none'
     }
+
     this.url = preferences.debug_url || document.URL
+
     if (!(this.url.indexOf('https://github.com') < 0)) {
-      return new GithubWindow(preferences, this.storage)
+      this.overlay = new GithubWindow(preferences, this.storage)
     }
-    return null
   }
 
   private initialize(): void {
-    if (BootStrapper.preferences !== null) {
-      this.setupOverlay()
-      return
+    if (BootStrapper.preferences) {
+      this.setupOverlay(BootStrapper.preferences)
+    } else {
+      this.storage.loadOption(this.setupOverlay)
     }
-
-    this.storage.loadOption((preferences: IStorageObject) => {
-      BootStrapper.preferences = preferences
-      this.setupOverlay()
-    })
   }
 
-  private setupOverlay(): void {
-    if (!BootStrapper.preferences.overlayEnabled) {
+  private setupOverlay(preferences: IStorageObject): void {
+    if (!preferences.overlayEnabled) {
       return
     }
 
-    this.overlay = this.createOverlay(BootStrapper.preferences)
+    this.createOverlay(preferences)
 
     window.addEventListener('message', (event: MessageEvent) => {
-      if (event.source === window &&
-          event.data.type) {
-          if (event.data.type === 'pcov' || event.data.type === 'url_change') {
-              this.overlay.log('::pjax-event-received')
-              return this.overlay.initialize()
-          }
+      if (event.source === window && event.data.type) {
+        if (this.overlay && (event.data.type === 'undercov' || event.data.type === 'url_change')) {
+          this.overlay.log('::pjax-event-received')
+          this.overlay.initialize()
+        }
       }
-      return null
     })
 
     if (!(this.url.indexOf('https://github.com') < 0)) {
@@ -69,19 +64,21 @@ class BootStrapper {
   private injectListener(): void {
     const listener =  '(' + function () {
       document.addEventListener('pjax:success', function() {
-        window.postMessage({ type: 'pcov' }, '*')
+        window.postMessage({ type: 'undercov' }, '*')
       })
     } + ')();'
 
     const script = document.createElement('script')
     const element = document.head || document.documentElement
 
-    script.textContent = listener
-    element.appendChild(script)
-    script.parentNode.removeChild(script)
+    if (element) {
+      script.textContent = listener
+      element.appendChild(script)
+      script.parentNode!.removeChild(script)
+    }
   }
 }
 
 $(() => {
-  return new BootStrapper(this)
+  return new BootStrapper()
 })
