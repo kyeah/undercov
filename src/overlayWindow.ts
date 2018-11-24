@@ -35,7 +35,7 @@ export abstract class OverlayWindow {
 
     this.page = (<any>pageType)[href[5]]
 
-    let ref = this.acquireReference(this.page!, href)
+    const ref = this.acquireReference(this.page!, href)
     if (ref) {
       this.coverageID = ref
     }
@@ -53,7 +53,6 @@ export abstract class OverlayWindow {
     if (this.page === pageType.pull) {
       url = this.preferences.prUrlTemplate.replace('$1', this.coverageID!)
     } else {
-      // TODO: filter out any pageType that will probably error
       url = this.preferences.branchUrlTemplate.replace('$1', this.coverageID!)
     }
 
@@ -123,12 +122,7 @@ export abstract class OverlayWindow {
 
     this.readCoverageObservable(id).finally(() => {
       this.invalidating = false
-    }).subscribe(visualize(id),
-                 (err: JQueryXHR) => {
-                   if (err.status === 500) {
-                     visualize(id)(OverlayWindow.emptyCoverage)
-                   }
-                 })
+    }).subscribe(visualize(id))
   }
 
   protected static ratio(hit: number, total: number): string {
