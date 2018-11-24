@@ -57,7 +57,9 @@ export default class GithubWindow extends OverlayWindow {
 
           let type = coverageMap[lineNumber]
           if (type && type > 1) {
-            type = 1
+            type = lineType.hit
+          } else if (type === -1) {
+            type = lineType.partial
           }
           // if (type !== undefined && type !== lineType.irrelevant) {
           //   totalLines++
