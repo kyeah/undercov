@@ -12,7 +12,7 @@ export abstract class OverlayWindow {
   protected page?: pageType
   protected coverageAvailable: boolean = false
   protected invalidating: boolean = false
-  protected coverage: { [key: string]: JSON; } = { }
+  protected coverage: { [key: string]: JSON; } = {}
 
   protected abstract acquireReference(page: pageType, value: string[]): string | void | undefined
   protected abstract visualizeOverlay(value: any): void
@@ -136,11 +136,13 @@ export abstract class OverlayWindow {
       return Observable.of(stored)
     }
 
-    const observable = Observable.fromCallback<any>(this.storage.loadCoverage)
-    return observable(this.coverage, id).map(cachedCoverage => {
-      return cachedCoverage || this.retrieveCoverageObservable(id)
-        .map(coverage => coverage && this.converters['json'](coverage))
-    }).concatAll()
+    // const observable = Observable.fromCallback<any>(this.storage.loadCoverage)
+    // return observable(this.coverage, id).map(cachedCoverage => {
+    //   return cachedCoverage || this.retrieveCoverageObservable(id)
+    //     .map(coverage => coverage && this.converters['json'](coverage))
+    // }).concatAll()
+    return this.retrieveCoverageObservable(id)
+      .map(coverage => coverage && this.converters['json'](coverage))
   }
 
   protected invalidateOverlay(): void {
