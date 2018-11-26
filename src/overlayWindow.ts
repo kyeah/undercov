@@ -136,13 +136,11 @@ export abstract class OverlayWindow {
       return Observable.of(stored)
     }
 
-    // const observable = Observable.fromCallback<any>(this.storage.loadCoverage)
-    // return observable(this.coverage, id).map(cachedCoverage => {
-    //   return cachedCoverage || this.retrieveCoverageObservable(id)
-    //     .map(coverage => coverage && this.converters['json'](coverage))
-    // }).concatAll()
-    return this.retrieveCoverageObservable(id)
-      .map(coverage => coverage && this.converters['json'](coverage))
+    const observable = Observable.fromCallback<any>(this.storage.loadCoverage)
+    return observable(this.coverage, id).map(cachedCoverage => {
+      return cachedCoverage || this.retrieveCoverageObservable(id)
+        .map(coverage => coverage && this.converters['json'](coverage))
+    }).concatAll()
   }
 
   protected invalidateOverlay(): void {
