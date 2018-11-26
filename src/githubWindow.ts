@@ -34,7 +34,7 @@ export default class GithubWindow extends OverlayWindow {
                 filePath = `${split.slice(5).join('/')}`
             } else {
                 filePath = element.find('.file-info>span[title]').attr('title') ||
-                    $('.file-info > a[title]').attr('title')
+                    element.find('.file-info > a[title]').attr('title')
             }
             this.log('::visualizeCoverage', filePath)
 
