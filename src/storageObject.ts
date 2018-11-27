@@ -1,10 +1,15 @@
+export type Repo = {
+  repoName: string,
+  branchUrlTemplate: string,
+  prUrlTemplate: string,
+  pathPrefix: string
+}
+
 export interface IStorageObject {
   overlayEnabled: boolean
   debugEnabled: boolean
   debug_url: any
-  branchUrlTemplate: string
-  prUrlTemplate: string
-  pathPrefix: string
+  repos: Repo[]
 }
 
 export class StorageObject implements IStorageObject {
@@ -28,36 +33,18 @@ export class StorageObject implements IStorageObject {
     return false
   }
 
-  get branchUrlTemplate(): string {
-    return this._branchUrlTemplate
+  get repos(): Repo[] {
+    return this._repos
   }
 
-  set branchUrlTemplate(value: string) {
-    this._branchUrlTemplate = value
-  }
-
-  get prUrlTemplate(): string {
-    return this._prUrlTemplate
-  }
-
-  set prUrlTemplate(value: string) {
-    this._prUrlTemplate = value
-  }
-
-  get pathPrefix(): string {
-    return this._pathPrefix
-  }
-
-  set pathPrefix(value: string) {
-    this._pathPrefix = value
+  set repos(value: Repo[]) {
+    this._repos = value
   }
 
   constructor(
     private _overlayEnabled: boolean = true,
     private _debugEnabled: boolean = false,
-    private _branchUrlTemplate: string = '',
-    private _prUrlTemplate: string = '',
-    private _pathPrefix: string = ''
+    private _repos: Repo[] = []
   ) {
   }
 }

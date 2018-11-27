@@ -1,4 +1,4 @@
-import { IStorageObject } from './storageObject'
+import { IStorageObject, Repo } from './storageObject'
 
 export interface ISyncStorage {
   loadCoverage(value: any, id: string, callback: (coverage: JSON) => void): void
@@ -7,9 +7,7 @@ export interface ISyncStorage {
   saveOption(
     overlayEnabled: boolean,
     debugEnabled: boolean,
-    branchUrlTemplate: string,
-    prUrlTemplate: string,
-    pathPrefix: string,
+    repos: Repo[],
     callback: () => void
   ): void
 

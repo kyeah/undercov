@@ -8,6 +8,7 @@ export enum lineType { missed, hit, irrelevant, partial }
 export abstract class OverlayWindow {
   protected static emptyCoverage: JSON = JSON.parse('{}')
   protected coverageID?: string
+  protected repoName?: string
   protected baseSha?: string
   protected page?: pageType
   protected coverageAvailable: boolean = false
@@ -49,11 +50,17 @@ export abstract class OverlayWindow {
     this.log('::retrieveCoverage', id)
     this.coverageAvailable = false
 
+    const repoOptions = this.preferences.repos.find((repo) => repo.repoName === this.repoName)
+    if (!repoOptions) {
+      this.log('::retrieveCoverage', 'no repo options for ${this.repoName}')
+      return Observable.of(OverlayWindow.emptyCoverage)
+    }
+
     let url: string
     if (this.page === pageType.pull) {
-      url = this.preferences.prUrlTemplate.replace('/\$1/g', this.coverageID!)
+      url = repoOptions.prUrlTemplate.replace(/\$1/g, this.coverageID!)
     } else {
-      url = this.preferences.branchUrlTemplate.replace(/\$1/g, this.coverageID!)
+      url = repoOptions.branchUrlTemplate.replace(/\$1/g, this.coverageID!)
     }
 
     this.log('::retrieveCoverage', url)
