@@ -1,10 +1,10 @@
 {
-  "name": "Coveralls overlay",
-  "version": "0.0.3",
+  "name": "Undercov",
+  "version": "1.0.0",
   "homepage_url": "https://github.com/kyeah/undercov",
   "description": "Overlay code coverage from arbitrary sources onto github UI",
   "offline_enabled": false,
-  "manifest_version": 2,
+  "manifest_version": 1,
   "icons": {
     "16": "resources/18dp.png",
     "48": "resources/18dp.png",
