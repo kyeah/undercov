@@ -53,7 +53,7 @@ export default class GithubWindow extends OverlayWindow {
       const btnGroup = element.find('.file-actions > .BtnGroup')
       const btn = document.createElement('a')
       btn.className = 'btn btn-sm BtnGroup-item'
-      btn.innerHTML = 'View coverage'
+      btn.innerHTML = `View coverage (${coverageMap['overallCoverage'].toFixed(2)}%)`
 
       let url: string
       if (this.page === pageType.pull) {
