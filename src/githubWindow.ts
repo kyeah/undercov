@@ -50,9 +50,20 @@ export default class GithubWindow extends OverlayWindow {
         continue
       }
 
-      if (element.find('.file-actions > .btn-group').length === 0) {
-        element.find('.file-actions a:first').wrap('<div class="btn-group"></div>')
+      const btnGroup = element.find('.file-actions > .BtnGroup')
+      const btn = document.createElement('a')
+      btn.className = 'btn btn-sm BtnGroup-item'
+      btn.innerHTML = 'View coverage'
+
+      let url: string
+      if (this.page === pageType.pull) {
+        url = repoOptions.prUrlTemplate.replace(/\$1/g, this.coverageID!)
+      } else {
+        url = repoOptions.branchUrlTemplate.replace(/\$1/g, this.coverageID!)
       }
+
+      btn.href = `${url.replace('coverage-final.json', '')}${filePath}.html`
+      btnGroup.prepend(btn)
 
       const _td = `td:eq(${this.page === pageType.blob ? 0 : 1})`
 
