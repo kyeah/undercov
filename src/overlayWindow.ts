@@ -143,14 +143,12 @@ export abstract class OverlayWindow {
       return Observable.of(stored)
     }
 
-    // Avoid cache for now because we aren't id-ing by commit, so we need
-    // to invalidate at some point.
+    const observable = Observable.fromCallback<any>(this.storage.loadCoverage)
+    return observable(this.coverage, id).map(cachedCoverage => {
+      return cachedCoverage || this.retrieveCoverageObservable(id)
+        .map(coverage => coverage && this.converters['json'](coverage))
+    }).concatAll()
 
-    // const observable = Observable.fromCallback<any>(this.storage.loadCoverage)
-    // return observable(this.coverage, id).map(cachedCoverage => {
-    //   return cachedCoverage || this.retrieveCoverageObservable(id)
-    //     .map(coverage => coverage && this.converters['json'](coverage))
-    // }).concatAll()
     return this.retrieveCoverageObservable(id)
       .map(coverage => coverage && this.converters['json'](coverage))
   }
@@ -168,7 +166,11 @@ export abstract class OverlayWindow {
     const visualize: (id: string) => (coverage: JSON) => void = (id: string) => (coverage: JSON) => {
       this.log('::visualize', 'saving coverage')
       this.coverage[id] = coverage
-      this.storage.saveCoverage(this.coverage, () => { })
+
+      // Don't persist across document pages, since we don't have
+      // invalidation mechanisms at the moment.
+      // this.storage.saveCoverage(this.coverage, () => { })
+
       this.visualizeOverlay(this.coverage[id])
     }
 
