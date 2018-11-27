@@ -13,7 +13,8 @@ class Options {
       (<HTMLInputElement>document.getElementById('overlay')).checked = value.overlayEnabled;
       (<HTMLInputElement>document.getElementById('debug')).checked = value.debugEnabled;
       (<HTMLInputElement>document.getElementById('branch')).value = value.branchUrlTemplate;
-      (<HTMLInputElement>document.getElementById('pr')).value = value.prUrlTemplate
+      (<HTMLInputElement>document.getElementById('pr')).value = value.prUrlTemplate;
+      (<HTMLInputElement>document.getElementById('path-prefix')).value = value.pathPrefix
     })
   }
 
@@ -26,12 +27,14 @@ class Options {
     const debugEnabled = (<HTMLInputElement>document.getElementById('debug')).checked
     const branchUrlTemplate = (<HTMLInputElement>document.getElementById('branch')).value
     const prUrlTemplate = (<HTMLInputElement>document.getElementById('pr')).value
+    const pathPrefix = (<HTMLInputElement>document.getElementById('path-prefix')).value
 
     Options.storage.saveOption(
       overlayEnabled,
       debugEnabled,
       branchUrlTemplate,
       prUrlTemplate,
+      pathPrefix,
       () => {
         const status = document.getElementById('status')
         status!.textContent = 'Options saved.'

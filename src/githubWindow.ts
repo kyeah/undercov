@@ -38,7 +38,7 @@ export default class GithubWindow extends OverlayWindow {
             }
             this.log('::visualizeCoverage', filePath)
 
-            const coverageMap = filePath && coverage && coverage[`/container/${filePath}`]
+            const coverageMap = filePath && coverage && coverage[`${this.preferences.pathPrefix}${filePath}`]
             if (!coverageMap) {
                 this.log('::visualizeCoverage', 'no coverage for file')
                 continue
