@@ -96,6 +96,8 @@ export abstract class OverlayWindow {
     const fns = Object.keys(coverage['fnMap'])
       .map(i => [coverage['fnMap'][i].loc, coverage['f'][i]])
 
+    let [statementsHit, totalStatements] = [0, 0]
+
     const res = [...statements, ...fns]
       .reduce((res: Object, [location, hits]) => {
         const start = location.start.line
@@ -107,14 +109,22 @@ export abstract class OverlayWindow {
             res[line] = hits
           }
         }
+
+        totalStatements++
+        if (hits > 0) {
+          statementsHit++
+        }
+
         return res
       }, {})
 
-    return Object.keys(coverage['branchMap'])
+    let [branchesHit, totalBranches] = [0, 0]
+
+    Object.keys(coverage['branchMap'])
       .filter(i => coverage['branchMap'][i].type !== 'if')
       .map(i => this.zip(coverage['branchMap'][i].locations, coverage['b'][i]))
       .reduce((acc: any[], val: any[]) => acc.concat(val), [])
-      .reduce((res: Object, [location, hits]) => {
+      .forEach(([location, hits]) => {
         const start = location.start.line
         const end = location.end.line
 
@@ -126,8 +136,17 @@ export abstract class OverlayWindow {
             res[line] = -1
           }
         }
-        return res
-      }, res)
+
+        totalBranches++
+        if (hits > 0) {
+          branchesHit++
+        }
+      })
+
+    res['statementCoverage'] = statementsHit / totalStatements * 100.0
+    res['branchCoverage'] = branchesHit / totalBranches * 100.0
+    res['overallCoverage'] = (statementsHit + branchesHit) / (totalStatements + totalBranches) * 100.0
+    return res
   }
 
   protected converters: { [key: string]: (coverage: JSON) => JSON; } = {
