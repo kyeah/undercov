@@ -60,6 +60,9 @@ class Options {
     )
   }
 
+  // Really obnoxious repo document elements creation below
+  // please forgive me
+
   private createEmptyRepoElement(options: Options) {
     return () => {
       this.createRepoElement(options)
@@ -73,29 +76,33 @@ class Options {
     prUrlTemplate: string = '',
     pathPrefix: string = ''
   ) {
-    const div = document.createElement('div')
+    const mainDiv = document.createElement('div')
+    mainDiv.style.padding = '3px 10px'
 
-    const removeButton = document.createElement('button')
+    const innerDiv = document.createElement('div')
+    innerDiv.style['border-left'] = '2px solid black'
+    innerDiv.style.padding = '0 10px'
+    innerDiv.style.margin = '10px 0'
+
+    const removeButton = document.createElement('a')
     removeButton.id = 'remove'
-    removeButton.textContent = 'Remove'
+    removeButton.textContent = 'remove repo'
 
-    div.appendChild(removeButton)
-    div.appendChild(document.createElement('br'))
+    innerDiv.appendChild(options.branchElement(branchUrlTemplate))
+    innerDiv.appendChild(document.createElement('br'))
 
-    div.appendChild(options.repoNameElement(repoName))
-    div.appendChild(document.createElement('br'))
+    innerDiv.appendChild(options.prElement(prUrlTemplate))
+    innerDiv.appendChild(document.createElement('br'))
 
-    div.appendChild(options.branchElement(branchUrlTemplate))
-    div.appendChild(document.createElement('br'))
+    innerDiv.appendChild(options.pathPrefixElement(pathPrefix))
 
-    div.appendChild(options.prElement(prUrlTemplate))
-    div.appendChild(document.createElement('br'))
-
-    div.appendChild(options.pathPrefixElement(pathPrefix))
-    div.appendChild(document.createElement('br'))
+    mainDiv.appendChild(options.repoNameElement(repoName))
+    mainDiv.appendChild(removeButton)
+    mainDiv.appendChild(document.createElement('br'))
+    mainDiv.appendChild(innerDiv)
 
     const parent = <HTMLInputElement>document.getElementById('repos')
-    parent.appendChild(div)
+    parent.appendChild(mainDiv)
 
     removeButton.addEventListener('click', () => {
       const div = removeButton.parentNode!
@@ -109,13 +116,23 @@ class Options {
     input.id = id
     input.placeholder = placeholder
     input.value = value
+    input.style.display = 'block'
+
+    const resizeInput = (input: HTMLInputElement) => {
+      const length = Math.max(input.value.length || input.placeholder.length, 20)
+      input.style.width = `${length}ch`
+    }
+
+    input.addEventListener('input', function() { resizeInput(this) })
+    resizeInput(input)
 
     const labelElement = window.document.createElement('label')
     labelElement.textContent = label
+    labelElement.style.display = 'block'
 
     const div = window.document.createElement('div')
-    div.appendChild(input)
     div.appendChild(labelElement)
+    div.appendChild(input)
     return div
   }
 
@@ -123,7 +140,7 @@ class Options {
     return this.textElement(
       'repo-name',
       'org/repo',
-      'full repo name',
+      '',
       value
     )
   }
