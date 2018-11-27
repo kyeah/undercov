@@ -1,4 +1,4 @@
-import { IStorageObject, StorageObject } from '../../storageObject'
+import { IStorageObject, Repo, StorageObject } from '../../storageObject'
 import { ISyncStorage } from '../../syncStorage'
 
 export class ChromeStorage implements ISyncStorage {
@@ -6,9 +6,7 @@ export class ChromeStorage implements ISyncStorage {
     chrome.storage.sync.get({
       overlayEnabled: true,
       debugEnabled: false,
-      branchUrlTemplate: '',
-      prUrlTemplate: '',
-      pathPrefix: ''
+      repos: []
     }, (items: any) => {
       if (items['overlayEnabled'] === undefined) {
         items['overlayEnabled'] = true
@@ -16,9 +14,7 @@ export class ChromeStorage implements ISyncStorage {
       callback(new StorageObject(
         items['overlayEnabled'],
         items['debugEnabled'],
-        items['branchUrlTemplate'],
-        items['prUrlTemplate'],
-        items['pathPrefix']
+        items['repos']
       ))
     })
   }
@@ -26,17 +22,13 @@ export class ChromeStorage implements ISyncStorage {
   saveOption(
     overlayEnabled: boolean,
     debugEnabled: boolean,
-    branchUrlTemplate: string,
-    prUrlTemplate: string,
-    pathPrefix: string,
+    repos: Repo[],
     callback: () => void
   ): void {
     chrome.storage.sync.set({
       overlayEnabled,
       debugEnabled,
-      branchUrlTemplate,
-      prUrlTemplate,
-      pathPrefix
+      repos
     }, callback)
   }
 

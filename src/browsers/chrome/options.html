@@ -8,23 +8,9 @@
 </head>
 
 <body>
-  <div>
-    <input type="text" id="branch" placeholder="https://example.com/artifacts/coverage/branches/$1/coverage.json">
-    <label>URL Template for branch coverage (using $1 as branch name)</label>
-  </div>
-  <br>
+  <div id="repos"></div>
 
-  <div>
-    <input type="text" id="pr" placeholder="https://example.com/artifacts/coverage/prs/PR-$1/coverage.json">
-    <label>URL Template for PR coverage (using $1 as pull request ID)</label>
-  </div>
-  <br>
-
-  <div>
-    <input type="text" id="path-prefix" placeholder="/container/">
-    <label>Path prefix</label>
-  </div>
-  <br>
+  <button id="add-repo">Add Github repository</button>
 
   <div>
     <input type="checkbox" id="overlay">
