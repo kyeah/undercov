@@ -71,18 +71,14 @@ export abstract class OverlayWindow {
       dataType: 'json'
     }
 
-    const promise = $.when($.ajax(url, settings))
-
-    if (repoOptions.authUrlTemplate) {
-      return Rx.Observable.fromPromise(Promise.resolve(
-        promise.fail(() => {
+    return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
+      .catch((err: any) => {
+        if (repoOptions.authUrlTemplate && err.status === 403) {
           const authUrl = repoOptions.authUrlTemplate.replace(/\$1/g, window.location.href)
-          return window.location.replace(authUrl)
-        })
-      ))
-    } else {
-      return Rx.Observable.fromPromise(Promise.resolve(promise))
-    }
+          window.location.replace(authUrl)
+        }
+        return Observable.empty()
+      })
   }
 
   private range(start: number, end: number): number[] {
