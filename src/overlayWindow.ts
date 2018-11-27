@@ -51,9 +51,9 @@ export abstract class OverlayWindow {
 
     let url: string
     if (this.page === pageType.pull) {
-      url = this.preferences.prUrlTemplate.replace('$1', this.coverageID!)
+      url = this.preferences.prUrlTemplate.replace('/\$1/g', this.coverageID!)
     } else {
-      url = this.preferences.branchUrlTemplate.replace('$1', this.coverageID!)
+      url = this.preferences.branchUrlTemplate.replace(/\$1/g, this.coverageID!)
     }
 
     this.log('::retrieveCoverage', url)

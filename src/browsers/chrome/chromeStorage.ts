@@ -7,7 +7,8 @@ export class ChromeStorage implements ISyncStorage {
       overlayEnabled: true,
       debugEnabled: false,
       branchUrlTemplate: '',
-      prUrlTemplate: ''
+      prUrlTemplate: '',
+      pathPrefix: ''
     }, (items: any) => {
       if (items['overlayEnabled'] === undefined) {
         items['overlayEnabled'] = true
@@ -16,7 +17,8 @@ export class ChromeStorage implements ISyncStorage {
         items['overlayEnabled'],
         items['debugEnabled'],
         items['branchUrlTemplate'],
-        items['prUrlTemplate']
+        items['prUrlTemplate'],
+        items['pathPrefix']
       ))
     })
   }
@@ -26,13 +28,15 @@ export class ChromeStorage implements ISyncStorage {
     debugEnabled: boolean,
     branchUrlTemplate: string,
     prUrlTemplate: string,
+    pathPrefix: string,
     callback: () => void
   ): void {
     chrome.storage.sync.set({
       overlayEnabled,
       debugEnabled,
       branchUrlTemplate,
-      prUrlTemplate
+      prUrlTemplate,
+      pathPrefix
     }, callback)
   }
 

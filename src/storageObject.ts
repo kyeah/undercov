@@ -4,6 +4,7 @@ export interface IStorageObject {
   debug_url: any
   branchUrlTemplate: string
   prUrlTemplate: string
+  pathPrefix: string
 }
 
 export class StorageObject implements IStorageObject {
@@ -43,9 +44,20 @@ export class StorageObject implements IStorageObject {
     this._prUrlTemplate = value
   }
 
-  constructor(private _overlayEnabled: boolean = true,
-              private _debugEnabled: boolean = false,
-              private _branchUrlTemplate: string = '',
-              private _prUrlTemplate: string = '') {
+  get pathPrefix(): string {
+    return this._pathPrefix
+  }
+
+  set pathPrefix(value: string) {
+    this._pathPrefix = value
+  }
+
+  constructor(
+    private _overlayEnabled: boolean = true,
+    private _debugEnabled: boolean = false,
+    private _branchUrlTemplate: string = '',
+    private _prUrlTemplate: string = '',
+    private _pathPrefix: string = ''
+  ) {
   }
 }
