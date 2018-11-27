@@ -14,3 +14,4 @@ Chrome extension to overlay code coverage reports from an arbitrary HTTP source 
 - [ ] fix showing ratios for each file
 - [ ] clickthrough button to html src, if available (helps to see more detail on partial hits)
 - [ ] LRU chrome storage
+- [ ] Support reading repo options from undercov file stored in repo?
