@@ -7,6 +7,7 @@ Chrome extension to overlay code coverage reports from an arbitrary HTTP source 
 
 # TODO
 
+- [ ] version cached branch/pr by last commit if possible...else don't have a cache
 - [ ] Options and converters for different formats (lcov, cobertura, coveralls, code-cov, etc.)
 - [ ] options for UI (swapping code diff vs blob num highlighting)
 - [ ] fix pageType=tree visualize overall coverage

@@ -143,11 +143,16 @@ export abstract class OverlayWindow {
       return Observable.of(stored)
     }
 
-    const observable = Observable.fromCallback<any>(this.storage.loadCoverage)
-    return observable(this.coverage, id).map(cachedCoverage => {
-      return cachedCoverage || this.retrieveCoverageObservable(id)
-        .map(coverage => coverage && this.converters['json'](coverage))
-    }).concatAll()
+    // Avoid cache for now because we aren't id-ing by commit, so we need
+    // to invalidate at some point.
+
+    // const observable = Observable.fromCallback<any>(this.storage.loadCoverage)
+    // return observable(this.coverage, id).map(cachedCoverage => {
+    //   return cachedCoverage || this.retrieveCoverageObservable(id)
+    //     .map(coverage => coverage && this.converters['json'](coverage))
+    // }).concatAll()
+    return this.retrieveCoverageObservable(id)
+      .map(coverage => coverage && this.converters['json'](coverage))
   }
 
   protected invalidateOverlay(): void {
