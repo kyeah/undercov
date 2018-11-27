@@ -2,7 +2,8 @@ export type Repo = {
   repoName: string,
   branchUrlTemplate: string,
   prUrlTemplate: string,
-  pathPrefix: string
+  pathPrefix: string,
+  authUrlTemplate: string
 }
 
 export interface IStorageObject {

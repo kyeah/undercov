@@ -21,7 +21,8 @@ class Options {
           repo.repoName,
           repo.branchUrlTemplate,
           repo.prUrlTemplate,
-          repo.pathPrefix
+          repo.pathPrefix,
+          repo.authUrlTemplate
         )
       }
     })
@@ -44,7 +45,8 @@ class Options {
         repoName: (<HTMLInputElement>repo.querySelector('#repo-name')).value,
         branchUrlTemplate: (<HTMLInputElement>repo.querySelector('#branch')).value,
         prUrlTemplate: (<HTMLInputElement>repo.querySelector('#pr')).value,
-        pathPrefix: (<HTMLInputElement>repo.querySelector('#path-prefix')).value
+        pathPrefix: (<HTMLInputElement>repo.querySelector('#path-prefix')).value,
+        authUrlTemplate: (<HTMLInputElement>repo.querySelector('#auth')).value
       })
     }
 
@@ -74,7 +76,8 @@ class Options {
     repoName: string = '',
     branchUrlTemplate: string = '',
     prUrlTemplate: string = '',
-    pathPrefix: string = ''
+    pathPrefix: string = '',
+    authUrlTemplate: string = ''
   ) {
     const mainDiv = document.createElement('div')
     mainDiv.style.padding = '3px 10px'
@@ -92,6 +95,9 @@ class Options {
     innerDiv.appendChild(document.createElement('br'))
 
     innerDiv.appendChild(options.prElement(prUrlTemplate))
+    innerDiv.appendChild(document.createElement('br'))
+
+    innerDiv.appendChild(options.authUrlElement(authUrlTemplate))
     innerDiv.appendChild(document.createElement('br'))
 
     innerDiv.appendChild(options.pathPrefixElement(pathPrefix))
@@ -168,6 +174,15 @@ class Options {
       'path-prefix',
       '/container/',
       'Path prefix for coverage files',
+      value
+    )
+  }
+
+  private authUrlElement(value: string): HTMLDivElement {
+    return this.textElement(
+      'auth',
+      'https://example.com/securityRealm/commenceLogin?from=$1',
+      'URL Template for authentication to the remote server (using $1 as current page href)',
       value
     )
   }
