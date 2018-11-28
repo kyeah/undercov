@@ -136,14 +136,16 @@ export default class GithubWindow extends OverlayWindow {
 
     switch (this.page) {
       case pageType.tree:
-        this.visualizeOverallCoverage(coverage)
-        setTimeout(() => {
-          if (!$('.files > tbody > tr > .coverage')) {
-            // the ultimate hack to get around GH's
-            // delayed page wipes/updates
-            this.visualizeOverallCoverage(coverage)
-          }
-        }, 1000)
+        if (this.preferences.filetreeCoverageEnabled) {
+          this.visualizeOverallCoverage(coverage)
+          setTimeout(() => {
+            if (!$('.files > tbody > tr > .coverage')) {
+              // the ultimate hack to get around GH's
+              // delayed page wipes/updates
+              this.visualizeOverallCoverage(coverage)
+            }
+          }, 1000)
+        }
         break
       case pageType.blob:
       case pageType.pull:
