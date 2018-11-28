@@ -7,20 +7,45 @@ export default class GithubWindow extends OverlayWindow {
     super(preferences, storage)
   }
 
-  // TODO: fix this (iterate over all files in the tree, calculate covered percentage)
-  // maybe i should do this calculation up front...
-  // private visualizeOverallCoverage(coverage: JSON): void {
-  //   const changed: number = (<any>coverage)['coverage_change']
-  //   const overall: number = (<any>coverage)['covered_percent']
+  private visualizeOverallCoverage(coverage: JSON): void {
+    const repoOptions = this.preferences.repos.find((repo) => repo.repoName === this.repoName)
+    if (!repoOptions) {
+      this.log('::visualizeOverallCoverage', 'no repo options for ${this.repoName}')
+      return
+    }
 
-  //   const changedPrefix: string = changed > 0 ? '+' : ''
-  //   const formatString: string = `${overall.toFixed(2)}%,
-  //                               ${changedPrefix}${changed}`
+    for (const elem of $('.files > tbody > tr > .content')) {
+      const element = $(elem)
+      const href = element.find('a').attr('href')
 
-  //   $('.commit-tease .right').append(`<a href="${OverlayWindow.baseUrl}/${this.commitSha}"
-  //     class="sha-block coveralls coveralls-removable tooltipped tooltipped-n" aria-label="Overall coverage">
-  //     ${formatString}%</a>`)
-  // }
+      if (!href) {
+        continue
+      }
+
+      const filePath = href!.split('/').slice(5).join('/')
+
+      const coverageMap = filePath && coverage && coverage[`${repoOptions.pathPrefix}${filePath}`]
+
+      const td = document.createElement('td')
+
+      if (coverageMap) {
+        const cov = coverageMap['overallCoverage'].toFixed(2)
+        const span = document.createElement('span')
+        span.textContent = `${cov}%`
+        td.appendChild(span)
+
+        if (cov >= 80) {
+          td.className = 'coverage coveralls-high'
+        } else if (cov >= 60) {
+          td.className = 'coverage coveralls-med'
+        } else {
+          td.className = 'coverage coveralls-low'
+        }
+      }
+
+      elem.parentNode!.insertBefore(td, elem.nextElementSibling!.nextElementSibling)
+    }
+  }
 
   private visualizeCoverage(coverage: JSON): void {
     const repoOptions = this.preferences.repos.find((repo) => repo.repoName === this.repoName)
@@ -111,7 +136,14 @@ export default class GithubWindow extends OverlayWindow {
 
     switch (this.page) {
       case pageType.tree:
-        //this.visualizeOverallCoverage(coverage);
+        this.visualizeOverallCoverage(coverage)
+        setTimeout(() => {
+          if (!$('.files > tbody > tr > .coverage')) {
+            // the ultimate hack to get around GH's
+            // delayed page wipes/updates
+            this.visualizeOverallCoverage(coverage)
+          }
+        }, 1000)
         break
       case pageType.blob:
       case pageType.pull:
