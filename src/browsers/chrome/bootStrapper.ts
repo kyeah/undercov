@@ -62,7 +62,7 @@ class BootStrapper {
    * Inject listener script into document
    */
   private injectListener(): void {
-    const listener =  '(' + function () {
+    const listener = '(' + function() {
       document.addEventListener('pjax:success', function() {
         window.postMessage({ type: 'undercov' }, '*')
       })

@@ -17,6 +17,26 @@ td.blob-num.coveralls {
   }
 }
 
+table.files td.coverage {
+    padding-left: 6px;
+    padding-right: 6px;
+    text-align: right;
+    width: 30px;
+
+    &.coveralls-high {
+        background-color: #dbffdb;
+        border-color: #c1e9c1;
+    }
+    &.coveralls-med {
+        background: rgb(247, 246, 172);
+        border-color: rgb(213, 212, 116);
+    }
+    &.coveralls-low {
+        background-color: #ffdddd;
+        border-color: #f1c0c0;
+    }
+}
+
 .sha-block.coveralls,
 .sha.coveralls {
   margin: 0 4px;
