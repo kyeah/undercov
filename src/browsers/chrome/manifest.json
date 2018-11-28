@@ -13,9 +13,17 @@
     "144": "resources/36dp.png",
     "192": "resources/48dp.png"
   },
+  "browser_action": {
+    "default_icon": {
+      "16": "resources/18dp.png"
+    }
+  },
   "options_ui": {
     "page": "lib/options.html",
     "chrome_style": true
+  },
+  "background": {
+    "scripts": ["lib/background.js"]
   },
   "content_scripts": [
     {
@@ -41,6 +49,7 @@
   ],
   "permissions": [
     "*://*/*",
-    "storage"
+    "storage",
+    "notifications"
   ]
 }

@@ -21,6 +21,16 @@ export class ChromeStorage implements ISyncStorage {
     })
   }
 
+  saveOptions(preferences: IStorageObject): void {
+    this.saveOption(
+      preferences.overlayEnabled,
+      preferences.debugEnabled,
+      preferences.filetreeCoverageEnabled,
+      preferences.repos,
+      () => { }
+    )
+  }
+
   saveOption(
     overlayEnabled: boolean,
     debugEnabled: boolean,

@@ -24,6 +24,10 @@ class BootStrapper {
 
     this.url = preferences.debug_url || document.URL
 
+    if (this.url.includes('raw.githubusercontent.com')) {
+      this.initializeBrowserAction(preferences)
+    }
+
     if (!(this.url.indexOf('https://github.com') < 0)) {
       this.overlay = new GithubWindow(preferences, this.storage)
     }
@@ -76,6 +80,48 @@ class BootStrapper {
       element.appendChild(script)
       script.parentNode!.removeChild(script)
     }
+  }
+
+  private initializeBrowserAction(preferences: IStorageObject): void {
+    // @ts-ignore
+    chrome.runtime.onMessage.addListener((msg: any, _sender: any, sendResponse: any) => {
+      if (msg.action === 'BROWSER_ACTION_CLICKED') {
+        let json
+        try {
+          json = JSON.parse($('pre').text())
+        } catch (e) {
+          return
+        }
+
+        if (!json['branchUrlTemplate'] && !json['prUrlTemplate']) {
+          return
+        }
+
+        const split = document.URL.split('/')
+        json.repoName = `${split[3]}/${split[4]}`
+
+        for (let i = 0; i < preferences.repos.length; i++) {
+          if (preferences.repos[i].repoName === json.repoName) {
+            preferences.repos.splice(i, 1)
+            break
+          }
+        }
+
+        preferences.repos.push(json)
+        this.storage.saveOptions(preferences)
+
+        console.log('test')
+        sendResponse({
+          action: 'REQUEST_NOTIFICATION',
+          options: {
+            type: 'basic',
+            iconUrl: 'resources/18dp.png',
+            title: 'undercov',
+            message: `Configured ${json.repoName}.`
+          }
+        })
+      }
+    })
   }
 }
 
