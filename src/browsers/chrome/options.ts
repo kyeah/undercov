@@ -12,7 +12,8 @@ class Options {
   private restoreState(): void {
     Options.storage.loadOption((value: IStorageObject) => {
       (<HTMLInputElement>document.getElementById('overlay')).checked = value.overlayEnabled;
-      (<HTMLInputElement>document.getElementById('debug')).checked = value.debugEnabled
+      (<HTMLInputElement>document.getElementById('debug')).checked = value.debugEnabled;
+      (<HTMLInputElement>document.getElementById('filetree')).checked = value.filetreeCoverageEnabled
 
       const repos = value.repos || []
       for (const repo of repos) {
@@ -36,6 +37,7 @@ class Options {
   private saveOptions(): void {
     const overlayEnabled = (<HTMLInputElement>document.getElementById('overlay')).checked
     const debugEnabled = (<HTMLInputElement>document.getElementById('debug')).checked
+    const filetreeCoverageEnabled = (<HTMLInputElement>document.getElementById('filetree')).checked
     const reposElement = (<HTMLInputElement>document.getElementById('repos')).children
 
     const repos = []
@@ -53,6 +55,7 @@ class Options {
     Options.storage.saveOption(
       overlayEnabled,
       debugEnabled,
+      filetreeCoverageEnabled,
       repos,
       () => {
         const status = document.getElementById('status')

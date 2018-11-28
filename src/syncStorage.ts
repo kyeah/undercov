@@ -7,6 +7,7 @@ export interface ISyncStorage {
   saveOption(
     overlayEnabled: boolean,
     debugEnabled: boolean,
+    filetreeCoverageEnabled: boolean,
     repos: Repo[],
     callback: () => void
   ): void

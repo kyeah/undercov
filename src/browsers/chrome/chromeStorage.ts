@@ -6,6 +6,7 @@ export class ChromeStorage implements ISyncStorage {
     chrome.storage.sync.get({
       overlayEnabled: true,
       debugEnabled: false,
+      filetreeCoverageEnabled: true,
       repos: []
     }, (items: any) => {
       if (items['overlayEnabled'] === undefined) {
@@ -14,6 +15,7 @@ export class ChromeStorage implements ISyncStorage {
       callback(new StorageObject(
         items['overlayEnabled'],
         items['debugEnabled'],
+        items['filetreeCoverageEnabled'],
         items['repos']
       ))
     })
@@ -22,12 +24,14 @@ export class ChromeStorage implements ISyncStorage {
   saveOption(
     overlayEnabled: boolean,
     debugEnabled: boolean,
+    filetreeCoverageEnabled: boolean,
     repos: Repo[],
     callback: () => void
   ): void {
     chrome.storage.sync.set({
       overlayEnabled,
       debugEnabled,
+      filetreeCoverageEnabled,
       repos
     }, callback)
   }

@@ -9,6 +9,7 @@ export type Repo = {
 export interface IStorageObject {
   overlayEnabled: boolean
   debugEnabled: boolean
+  filetreeCoverageEnabled: boolean
   debug_url: any
   repos: Repo[]
 }
@@ -20,6 +21,14 @@ export class StorageObject implements IStorageObject {
 
   set overlayEnabled(value: boolean) {
     this._overlayEnabled = value
+  }
+
+  get filetreeCoverageEnabled(): boolean {
+    return this._filetreeCoverageEnabled
+  }
+
+  set filetreeCoverageEnabled(value: boolean) {
+    this._filetreeCoverageEnabled = value
   }
 
   get debugEnabled(): boolean {
@@ -45,6 +54,7 @@ export class StorageObject implements IStorageObject {
   constructor(
     private _overlayEnabled: boolean = true,
     private _debugEnabled: boolean = false,
+    private _filetreeCoverageEnabled: boolean = true,
     private _repos: Repo[] = []
   ) {
   }
