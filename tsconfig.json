@@ -21,6 +21,7 @@
     "src/storageObject.ts",
     "src/syncStorage.ts",
     "src/browsers/chrome/bootStrapper.ts",
-    "src/browsers/chrome/options.ts"
+    "src/browsers/chrome/options.ts",
+    "src/browsers/chrome/background.ts"
    ]
 }
