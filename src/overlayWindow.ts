@@ -17,6 +17,7 @@ export abstract class OverlayWindow {
 
   protected abstract acquireReference(page: pageType, value: string[]): string | void | undefined
   protected abstract visualizeOverlay(value: any): void
+  protected abstract checkForConfig(): void
 
   constructor(protected preferences: IStorageObject, private storage: ISyncStorage) {
     this.initialize()
@@ -43,6 +44,10 @@ export abstract class OverlayWindow {
 
     if (this.coverageID) {
       this.invalidateOverlay()
+    }
+
+    if (this.repoName && !this.preferences.repos.find(repo => repo.repoName === this.repoName)) {
+      this.checkForConfig()
     }
   }
 

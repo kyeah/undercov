@@ -7,6 +7,34 @@ export default class GithubWindow extends OverlayWindow {
     super(preferences, storage)
   }
 
+  protected checkForConfig(): void {
+    for (const elem of $('.files .js-navigation-open')) {
+      const href = elem.getAttribute('href')
+      if (href && href.includes('blob')) {
+        const split = href.split('/')
+        if (split[split.length - 1].includes('undercov')) {
+          this.linkToConfig(href!)
+          break
+        }
+      }
+    }
+  }
+
+  private linkToConfig(href: string): void {
+    const btnGroup = $('.file-navigation > .BtnGroup')
+    if (!btnGroup) {
+      return
+    }
+
+    const btn = document.createElement('a')
+    btn.className = 'btn btn-sm BtnGroup-item'
+    btn.innerHTML = `Undercov available`
+    btn.style.color = '#0366d6'
+    btn.href = href
+
+    btnGroup.prepend(btn)
+  }
+
   private visualizeOverallCoverage(coverage: JSON): void {
     const repoOptions = this.preferences.repos.find((repo) => repo.repoName === this.repoName)
     if (!repoOptions) {
@@ -14,6 +42,7 @@ export default class GithubWindow extends OverlayWindow {
       return
     }
 
+    this.log('::visualizeOverallCoverage', 'start')
     for (const elem of $('.files > tbody > tr > .content')) {
       const element = $(elem)
       const href = element.find('a').attr('href')
@@ -137,14 +166,28 @@ export default class GithubWindow extends OverlayWindow {
     switch (this.page) {
       case pageType.tree:
         if (this.preferences.filetreeCoverageEnabled) {
-          this.visualizeOverallCoverage(coverage)
-          setTimeout(() => {
-            if (!$('.files > tbody > tr > .coverage')) {
-              // the ultimate hack to get around GH's
-              // delayed page wipes/updates
+          const href = window.location.href
+          let counter = 0
+
+          const fn = () => {
+            if (window.location.href !== href) {
+              return
+            }
+
+            if ($('.files > tbody > tr > .coverage').length === 0) {
               this.visualizeOverallCoverage(coverage)
             }
-          }, 1000)
+
+            // the ultimate hack to get around GH's
+            // delayed page wipes/updates:
+            // continuously revisualize as needed.
+            counter++
+            if (counter < 4) {
+              setTimeout(fn, 1000)
+            }
+          }
+
+          fn()
         }
         break
       case pageType.blob:
