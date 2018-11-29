@@ -79,8 +79,21 @@ export abstract class OverlayWindow {
     return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
       .catch((err: any) => {
         if (repoOptions.authUrlTemplate && err.status === 403) {
-          const authUrl = repoOptions.authUrlTemplate.replace(/\$1/g, window.location.href)
-          window.location.replace(authUrl)
+          if (!window.location.href.endsWith('src=undercov')) {
+            const authUrl = repoOptions.authUrlTemplate.replace(/\$1/g, `${window.location.href}&src=undercov`)
+            window.location.replace(authUrl)
+          } else {
+            chrome.runtime.sendMessage({
+              action: 'REQUEST_NOTIFICATION',
+              options: {
+                type: 'basic',
+                iconUrl: 'resources/18dp.png',
+                title: 'undercov',
+                message: 'Failed to auth for coverage in repo. Remove auth URL from undercov options to prevent autoreload.',
+                requireInteraction: true
+              }
+            })
+          }
         }
         return Observable.empty()
       })
