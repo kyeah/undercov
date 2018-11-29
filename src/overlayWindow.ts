@@ -80,6 +80,15 @@ export abstract class OverlayWindow {
       .catch((err: any) => {
         if (repoOptions.authUrlTemplate && err.status === 403) {
           if (!window.location.href.endsWith('src=undercov')) {
+            chrome.runtime.sendMessage({
+              action: 'REQUEST_NOTIFICATION',
+              options: {
+                type: 'basic',
+                iconUrl: 'resources/18dp.png',
+                title: 'undercov',
+                message: 'Redirecting to authenticate for coverage...',
+              }
+            })
             const authUrl = repoOptions.authUrlTemplate.replace(/\$1/g, `${window.location.href}&src=undercov`)
             window.location.replace(authUrl)
           } else {
