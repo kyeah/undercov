@@ -30,7 +30,10 @@ export default class GithubWindow extends OverlayWindow {
     btn.className = 'btn btn-sm BtnGroup-item'
     btn.innerHTML = `Undercov available`
     btn.style.color = '#0366d6'
-    btn.href = href
+
+    const split = href.split('/')
+    split[3] = 'raw'
+    btn.href = split.join('/')
 
     btnGroup.prepend(btn)
   }
@@ -38,7 +41,7 @@ export default class GithubWindow extends OverlayWindow {
   private visualizeOverallCoverage(coverage: JSON): void {
     const repoOptions = this.preferences.repos.find((repo) => repo.repoName === this.repoName)
     if (!repoOptions) {
-      this.log('::visualizeOverallCoverage', 'no repo options for ${this.repoName}')
+      this.log('::visualizeOverallCoverage', `no repo options for ${this.repoName}`)
       return
     }
 
@@ -79,7 +82,7 @@ export default class GithubWindow extends OverlayWindow {
   private visualizeCoverage(coverage: JSON): void {
     const repoOptions = this.preferences.repos.find((repo) => repo.repoName === this.repoName)
     if (!repoOptions) {
-      this.log('::visualizeCoverage', 'no repo options for ${this.repoName}')
+      this.log('::visualizeCoverage', `no repo options for ${this.repoName}`)
       return
     }
 
