@@ -43,7 +43,6 @@
     "lib/coveralls.js"
   ],
   "permissions": [
-    "activeTab",
     "https://github.com/*",
     "https://raw.githubusercontent.com/*",
     "storage",
