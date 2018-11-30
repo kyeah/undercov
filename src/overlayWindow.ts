@@ -17,7 +17,7 @@ export abstract class OverlayWindow {
 
   protected abstract acquireReference(page: pageType, value: string[]): string | void | undefined
   protected abstract visualizeOverlay(value: any): void
-  protected abstract checkForConfig(): void
+  protected abstract checkForConfig(storage: ISyncStorage): void
 
   constructor(protected preferences: IStorageObject, private storage: ISyncStorage) {
     this.initialize()
@@ -42,12 +42,12 @@ export abstract class OverlayWindow {
       this.coverageID = ref
     }
 
-    if (this.coverageID) {
-      this.invalidateOverlay()
+    if (this.repoName && !this.preferences.repos.find(repo => repo.repoName === this.repoName)) {
+      this.checkForConfig(this.storage)
     }
 
-    if (this.repoName && !this.preferences.repos.find(repo => repo.repoName === this.repoName)) {
-      this.checkForConfig()
+    if (this.coverageID) {
+      this.invalidateOverlay()
     }
   }
 
@@ -57,7 +57,7 @@ export abstract class OverlayWindow {
 
     const repoOptions = this.preferences.repos.find((repo) => repo.repoName === this.repoName)
     if (!repoOptions) {
-      this.log('::retrieveCoverage', 'no repo options for ${this.repoName}')
+      this.log('::retrieveCoverage', `no repo options for ${this.repoName}`)
       return Observable.of(OverlayWindow.emptyCoverage)
     }
 

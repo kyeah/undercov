@@ -25,7 +25,7 @@ class BootStrapper {
     this.url = preferences.debug_url || document.URL
 
     if (this.url.includes('raw.githubusercontent.com')) {
-      this.initializeBrowserAction(preferences)
+      this.configureRepo(preferences)
     }
 
     if (!(this.url.indexOf('https://github.com') < 0)) {
@@ -82,44 +82,38 @@ class BootStrapper {
     }
   }
 
-  private initializeBrowserAction(preferences: IStorageObject): void {
-    // @ts-ignore
-    chrome.runtime.onMessage.addListener((msg: any, _sender: any, sendResponse: any) => {
-      if (msg.action === 'BROWSER_ACTION_CLICKED') {
-        let json
-        try {
-          json = JSON.parse($('pre').text())
-        } catch (e) {
-          return
-        }
+  private configureRepo(preferences: IStorageObject): void {
+    let json
+    try {
+      json = JSON.parse($('pre').text())
+    } catch (e) {
+      return
+    }
 
-        if (!json['branchUrlTemplate'] && !json['prUrlTemplate']) {
-          return
-        }
+    if (!json['branchUrlTemplate'] && !json['prUrlTemplate']) {
+      return
+    }
 
-        const split = document.URL.split('/')
-        json.repoName = `${split[3]}/${split[4]}`
+    const split = document.URL.split('/')
+    json.repoName = `${split[3]}/${split[4]}`
 
-        for (let i = 0; i < preferences.repos.length; i++) {
-          if (preferences.repos[i].repoName === json.repoName) {
-            preferences.repos.splice(i, 1)
-            break
-          }
-        }
+    for (let i = 0; i < preferences.repos.length; i++) {
+      if (preferences.repos[i].repoName === json.repoName) {
+        preferences.repos.splice(i, 1)
+        break
+      }
+    }
 
-        preferences.repos.push(json)
-        this.storage.saveOptions(preferences)
+    preferences.repos.push(json)
+    this.storage.saveOptions(preferences)
 
-        console.log('test')
-        sendResponse({
-          action: 'REQUEST_NOTIFICATION',
-          options: {
-            type: 'basic',
-            iconUrl: 'resources/18dp.png',
-            title: 'undercov',
-            message: `Configured ${json.repoName}.`
-          }
-        })
+    chrome.runtime.sendMessage({
+      action: 'REQUEST_NOTIFICATION',
+      options: {
+        type: 'basic',
+        iconUrl: 'resources/18dp.png',
+        title: 'undercov',
+        message: `Configured ${json.repoName}.`
       }
     })
   }

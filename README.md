@@ -12,3 +12,4 @@ Chrome extension to overlay code coverage reports from an arbitrary HTTP source 
 - [ ] options for UI (swapping code diff vs blob num highlighting)
 - [ ] LRU chrome storage
 - [ ] Support reading repo options from undercov file stored in repo?
+- [ ] enterprise github url support
