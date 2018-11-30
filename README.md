@@ -13,3 +13,4 @@ Chrome extension to overlay code coverage reports from an arbitrary HTTP source 
 - [ ] LRU chrome storage
 - [ ] Support reading repo options from undercov file stored in repo?
 - [ ] enterprise github url support
+- [ ] trim permissions and use chrome.permissions.request to request user-specified pages
