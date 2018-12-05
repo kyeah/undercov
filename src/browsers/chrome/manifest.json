@@ -1,6 +1,6 @@
 {
   "name": "Undercov",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage_url": "https://github.com/kyeah/undercov",
   "description": "Overlay code coverage from arbitrary sources onto github UI",
   "offline_enabled": false,
