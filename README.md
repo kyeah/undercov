@@ -2,10 +2,9 @@
 
 A Chrome extension to overlay code coverage reports from arbitrary HTTPS sources onto Github projects. 
 
-This allows individuals and organizations to retrieve and overlay reports from:
-- [x] private servers through user-authentication mechanisms, without having to upload files or grant access to third parties.
-- [x] local filesystems.
-- [ ] available third parties, such as codecov and coveralls.
+This allows individuals and organizations to retrieve and overlay reports from private servers through user-authentication mechanisms, without having to upload files or grant access to third parties.
+
+In the future, reports from available third parties, such as codecov and coveralls, will also be supported.
 
 ## Contributing
 
