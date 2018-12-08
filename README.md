@@ -1,9 +1,11 @@
 # undercov
 
-A Chrome extension to overlay code coverage reports from arbitrary HTTPS sources onto Github projects. This allows individuals and organizations to retrieve and overlay private reports through custom authentication mechanisms, without having to grant access or upload files and metadata to a third party.
+A Chrome extension to overlay code coverage reports from arbitrary HTTPS sources onto Github projects. 
 
-* This extension is inspired by the [codecov browser extension](https://github.com/codecov/browser-extension) and the [coveralls-overlay project](https://github.com/kwonoj/coveralls-overlay).
-* Icon resource comes from Google's [material design icon library](https://www.google.com/design/icons/#ic_visibility).
+This allows individuals and organizations to:
+- [x] Retrieve and overlay private reports through custom authentication mechanisms, without having to upload files or grant access to third parties.
+- [x] Retrieve and overlay reports from local filesystems.
+- [ ] Retrieve and overlay reports from available third parties, such as codecov and coveralls.
 
 ## Features
 
@@ -33,13 +35,18 @@ Each repo must be set up on a per-user basis to retrieve coverage from the appro
 ### Config Options
 
 - **branchUrlTemplate**: Path to the coverage file for branches (e.g. master) and tags (e.g. v1.2.0).
+
   Example: `https://ci-jenkins.internal/job/app/job/$1/Coverage_Report/coverage-final.json`
 - **prUrlTemplate**: Path to the coverage file for pull requests. 
+
   Example: `https://ci-jenkins.internal/job/app/job/PR-$1/Coverage_Report/coverage-final.json`
 - **authUrlTemplate**: Path to redirect to when the chrome user needs to authenticate.
+
   Example: `https://ci-jenkins.internal/securityRealm/commenceLogin?from=$1`
+
   NOTE: In the above example, the Jenkins securityRealm page receives the source github page URI through `?from=$1` and redirects back after the user has authenticated.
 - **pathPrefix**: Filepath prefix to be ignored for each file, if your reports were generated with absolute paths. 
+
   Example: `/container/`
   
 ### Semi-auto configuration
@@ -51,3 +58,8 @@ To semi-automate this, you can add an `.undercov.json` file to the root of your 
 - [ ] UI Options (enable line coverage overlay on the fileblob itself, similar to previous extensions)
 - [ ] Support for enterprise github
 - [ ] trim permissions and use chrome.permissions.request to request user-specified pages
+
+## Thanks
+
+* This extension is inspired by the [codecov browser extension](https://github.com/codecov/browser-extension) and the [coveralls-overlay project](https://github.com/kwonoj/coveralls-overlay).
+* Icon resource comes from Google's [material design icon library](https://www.google.com/design/icons/#ic_visibility).
