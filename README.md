@@ -2,22 +2,20 @@
 
 A Chrome extension to overlay code coverage reports from arbitrary HTTPS sources onto Github projects. 
 
-This allows individuals and organizations to:
-- [x] Retrieve and overlay private reports through custom authentication mechanisms, without having to upload files or grant access to third parties.
-- [x] Retrieve and overlay reports from local filesystems.
-- [ ] Retrieve and overlay reports from available third parties, such as codecov and coveralls.
+This allows individuals and organizations to retrieve and overlay reports from:
+- [x] private servers through user-authentication mechanisms, without having to upload files or grant access to third parties.
+- [x] local filesystems.
+- [ ] available third parties, such as codecov and coveralls.
 
 ## Features
 
-- [x] View line coverage on pull request file diffs
-- [x] View Line coverage when browsing files
-- [x] View per-file coverage percentages when browsing the filetree
-- [x] Configure data sources for coverage files
-- [x] Auto-authenticate when an auth URL is provided
-- [x] Link to full coverage file pages when an HTML report lives at the same domain
-- [x] Auto-configure a repository using a root JSON config file
-
-TODO: pics
+- View line coverage on pull request file diffs
+- View Line coverage when browsing files
+- View per-file coverage percentages when browsing the filetree
+- Configure data sources for coverage files
+- Auto-authenticate when an auth URL is provided
+- Link to full coverage file pages when an HTML report lives at the same domain
+- Auto-configure a repository using a root JSON config file
 
 ## Data Format Support
 
@@ -52,6 +50,15 @@ Each repo must be set up on a per-user basis to retrieve coverage from the appro
 ### Semi-auto configuration
 
 To semi-automate this, you can add an `.undercov.json` file to the root of your Github repository. The raw JSON cannot be automatically retrieved in the background because of Github CSRF protections, but any visitors with the chrome extension will see an `Undercov Available` button with a link to the raw JSON file, which will autoconfigure their extension with the given config options.
+
+```json
+{
+  "branchUrlTemplate": "https://ci-jenkins.internal/job/app/job/$1/Coverage_Report/coverage-final.json",
+  "prUrlTemplate": "https://ci-jenkins.internal/job/app/job/PR-$1/Coverage_Report/coverage-final.json",
+  "authUrlTemplate": "https://ci-jenkins.internal/securityRealm/commenceLogin?from=$1",
+  "pathPrefix": "/container/"
+}
+```
 
 ## Bucket List
 
