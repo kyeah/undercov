@@ -9,7 +9,7 @@ This allows individuals and organizations to retrieve and overlay reports from:
 
 ## Contributing
 
-Have questions or feedback? The best way to submit feedback and report bugs is to open a GitHub issue -- no question is too small.
+Please submit any feedback or bug reports as a GitHub issue. Thanks :)
 
 ## Features
 
