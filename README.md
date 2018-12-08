@@ -7,10 +7,14 @@ This allows individuals and organizations to retrieve and overlay reports from:
 - [x] local filesystems.
 - [ ] available third parties, such as codecov and coveralls.
 
+## Contributing
+
+Have questions or feedback? The best way to submit feedback and report bugs is to open a GitHub issue -- no question is too small.
+
 ## Features
 
 - View line coverage on pull request file diffs
-- View Line coverage when browsing files
+- View line coverage when browsing files
 - View per-file coverage percentages when browsing the filetree
 - Configure data sources for coverage files
 - Auto-authenticate when an auth URL is provided
