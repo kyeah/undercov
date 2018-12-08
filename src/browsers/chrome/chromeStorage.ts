@@ -45,17 +45,4 @@ export class ChromeStorage implements ISyncStorage {
       repos
     }, callback)
   }
-
-  loadCoverage(value: any, id: string, callback: (coverage: JSON) => void): void {
-    chrome.storage.local.get(value, (items: any) => {
-      const value = items[id]
-      if (callback) {
-        callback(value)
-      }
-    })
-  }
-
-  saveCoverage(value: any, callback: () => void): void {
-    chrome.storage.local.set(value, callback)
-  }
 }

@@ -9,7 +9,6 @@ export abstract class OverlayWindow {
   protected static emptyCoverage: JSON = JSON.parse('{}')
   protected coverageID?: string
   protected repoName?: string
-  protected baseSha?: string
   protected page?: pageType
   protected coverageAvailable: boolean = false
   protected invalidating: boolean = false
@@ -196,12 +195,6 @@ export abstract class OverlayWindow {
       return Observable.of(stored)
     }
 
-    const observable = Observable.fromCallback<any>(this.storage.loadCoverage)
-    return observable(this.coverage, id).map(cachedCoverage => {
-      return cachedCoverage || this.retrieveCoverageObservable(id)
-        .map(coverage => coverage && this.converters['json'](coverage))
-    }).concatAll()
-
     return this.retrieveCoverageObservable(id)
       .map(coverage => coverage && this.converters['json'](coverage))
   }
@@ -219,25 +212,11 @@ export abstract class OverlayWindow {
     const visualize: (id: string) => (coverage: JSON) => void = (id: string) => (coverage: JSON) => {
       this.log('::visualize', 'saving coverage')
       this.coverage[id] = coverage
-
-      // Don't persist across document pages, since we don't have
-      // invalidation mechanisms at the moment.
-      // this.storage.saveCoverage(this.coverage, () => { })
-
       this.visualizeOverlay(this.coverage[id])
     }
 
     this.readCoverageObservable(id).finally(() => {
       this.invalidating = false
     }).subscribe(visualize(id))
-  }
-
-  protected static ratio(hit: number, total: number): string {
-    if (hit >= total) {
-      return '100'
-    } else if (total > hit && hit > 0) {
-      return ((hit / total) * 10000 / 100).toFixed(2)
-    }
-    return '0'
   }
 }

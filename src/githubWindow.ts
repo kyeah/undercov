@@ -87,8 +87,6 @@ export default class GithubWindow extends OverlayWindow {
     }
 
     for (const elem of $('.repository-content .file')) {
-      // let totalHits = 0
-      // let totalLines = 0
       const element = $(elem)
 
       let filePath
@@ -137,12 +135,6 @@ export default class GithubWindow extends OverlayWindow {
           } else if (type === -1) {
             type = lineType.partial
           }
-          // if (type !== undefined && type !== lineType.irrelevant) {
-          //   totalLines++
-          // }
-          // if (type === lineType.hit) {
-          //   totalHits++
-          // }
 
           td
             .removeClass('coveralls-hit coveralls-missed coveralls-partial coveralls-irrelevant')
@@ -151,14 +143,6 @@ export default class GithubWindow extends OverlayWindow {
           this.log('::visualizeCoverage', 'error: ${e}')
         }
       }
-
-      // const ratio = OverlayWindow.ratio(totalHits, totalLines)
-      // if (page === pageType.blob) {
-      //   button.text(`Coverage ${ratio}%`)
-      //   if (this.preferences.overlayEnabled) {
-      //     button.trigger('click')
-      //   }
-      // }
     }
   }
 
@@ -181,8 +165,7 @@ export default class GithubWindow extends OverlayWindow {
               this.visualizeOverallCoverage(coverage)
             }
 
-            // the ultimate hack to get around GH's
-            // delayed page wipes/updates:
+            // the ultimate hack to get around GH's delayed page wipes/updates...
             // continuously revisualize as needed.
             counter++
             if (counter < 4) {
@@ -202,7 +185,6 @@ export default class GithubWindow extends OverlayWindow {
 
   protected acquireReference(page: pageType, value: string[]): string | void {
     this.log('::acquireReference ', 'pageType ' + pageType[page])
-    this.baseSha = undefined
     this.repoName = undefined
 
     if (page === pageType.commit || page === pageType.blob || page === pageType.tree || page === pageType.pull) {
@@ -210,12 +192,6 @@ export default class GithubWindow extends OverlayWindow {
       this.repoName = `${value[3]}/${value[4]}`
       this.log('::acquireReference ', value[6])
       return value[6]
-    } else if (page === pageType.compare) {
-      // keep commit shas for now, idk
-      this.repoName = `${value[3]}/${value[4]}`
-      this.baseSha = `&base=${$('.commit-id:first').text()}`
-      this.log('::acquireReference ', $('.commit-id:last').text())
-      return $('.commit-id:last').text()
     }
   }
 }
