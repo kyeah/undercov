@@ -46,8 +46,10 @@
     "lib/coveralls.js"
   ],
   "permissions": [
-    "*://*/*",
     "storage",
     "notifications"
+  ],
+  "optional_permissions": [
+    "https://*/"
   ]
 }
