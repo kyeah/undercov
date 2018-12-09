@@ -32,11 +32,11 @@
     "browserify": "16.2.3",
     "exorcist": "1.0.1",
     "jquery": "3.3.1",
-    "less": "3.8.1",
+    "less": "3.9.0",
     "rx": "4.1.0",
     "rx-jquery": "1.1.7",
     "tsd": "0.6.5",
     "tslint": "5.11.0",
-    "typescript": "3.1.6"
+    "typescript": "3.2.2"
   }
 }
