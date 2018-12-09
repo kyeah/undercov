@@ -1,5 +1,7 @@
 # undercov
 
+![https://chrome.google.com/webstore/detail/undercov/ekoclfpkmghpgojlgjcfikppfpalhnnl](https://img.shields.io/chrome-web-store/v/ekoclfpkmghpgojlgjcfikppfpalhnnl.svg)
+
 A Chrome extension to overlay code coverage reports from arbitrary HTTPS sources onto Github projects. 
 
 This allows individuals and organizations to retrieve and overlay reports from private servers through user-authentication mechanisms, without having to upload files or grant access to third parties.
@@ -7,6 +9,12 @@ This allows individuals and organizations to retrieve and overlay reports from p
 In the future, reports from available third parties, such as codecov and coveralls, will also be supported.
 
 ![Filetree Coverage](github/imgs/filetree_coverage.png)
+
+## Installation
+
+Visit the [chrome web extension page](https://chrome.google.com/webstore/detail/undercov/ekoclfpkmghpgojlgjcfikppfpalhnnl) to download. Each repo must be configured in order to view coverage; usually you can visit the repo and click the button to autoconfigure:
+
+![Undercov Button](github/imgs/undercov_button.png)
 
 ## Contributing
 
