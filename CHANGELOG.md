@@ -1,3 +1,9 @@
+v1.0.2
+
+## Fixed
+
+- Allow .undercov.json to be found when visiting the base repo URL.
+
 v1.0.1
 -------
 
