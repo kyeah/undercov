@@ -6,16 +6,28 @@ This allows individuals and organizations to retrieve and overlay reports from p
 
 In the future, reports from available third parties, such as codecov and coveralls, will also be supported.
 
+![Filetree Coverage](github/imgs/filetree_coverage.png)
+
 ## Contributing
 
 Please submit any feedback or bug reports as a GitHub issue. Thanks :)
 
 ## Features
 
-- View line coverage on pull request file diffs
-- View line coverage when browsing files
 - View per-file coverage percentages when browsing the filetree
-- Configure data sources for coverage files
+
+- View line coverage when browsing files
+
+![File Coverage](github/imgs/file_coverage.png)
+
+- View line coverage on pull request file diffs
+
+![PR Coverage](github/imgs/pr_coverage.png)
+
+- Configure data sources for coverage files on a per-repo basis
+
+![Config](github/imgs/config.png)
+
 - Auto-authenticate when an auth URL is provided
 - Link to full coverage file pages when an HTML report lives at the same domain
 - Auto-configure a repository using a root JSON config file
@@ -37,18 +49,27 @@ Each repo must be set up on a per-user basis to retrieve coverage from the appro
 
 - **branchUrlTemplate**: Path to the coverage file for branches (e.g. master) and tags (e.g. v1.2.0).
 
-  Example: `https://ci-jenkins.internal/job/app/job/$1/Coverage_Report/coverage-final.json`
+  ```
+  https://ci-jenkins.internal/job/app/job/$1/Coverage_Report/coverage-final.json
+  ```
 - **prUrlTemplate**: Path to the coverage file for pull requests. 
 
-  Example: `https://ci-jenkins.internal/job/app/job/PR-$1/Coverage_Report/coverage-final.json`
+  ```
+  https://ci-jenkins.internal/job/app/job/PR-$1/Coverage_Report/coverage-final.json
+  ```
+  
 - **authUrlTemplate**: Path to redirect to when the chrome user needs to authenticate.
 
-  Example: `https://ci-jenkins.internal/securityRealm/commenceLogin?from=$1`
+  ```
+  https://ci-jenkins.internal/securityRealm/commenceLogin?from=$1
+  ```
 
   NOTE: In the above example, the Jenkins securityRealm page receives the source github page URI through `?from=$1` and redirects back after the user has authenticated.
 - **pathPrefix**: Filepath prefix to be ignored for each file, if your reports were generated with absolute paths. 
-
-  Example: `/container/`
+ 
+  ```
+  /container/
+  ```
   
 ### Semi-auto configuration
 
