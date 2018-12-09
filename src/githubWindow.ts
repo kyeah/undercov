@@ -192,6 +192,9 @@ export default class GithubWindow extends OverlayWindow {
       this.repoName = `${value[3]}/${value[4]}`
       this.log('::acquireReference ', value[6])
       return value[6]
+    } else if (page === undefined) {
+      this.repoName = `${value[3]}/${value[4]}`
+      this.log('::acquireReference ', 'root filetree')
     }
   }
 }
