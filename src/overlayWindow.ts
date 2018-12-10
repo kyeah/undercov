@@ -22,6 +22,9 @@ export abstract class OverlayWindow {
     this.initialize()
   }
 
+  /**
+   * Log to the console only if the debug setting is enabled.
+   */
   log(title: string, data?: any): void {
     if (!this.preferences.debugEnabled) {
       return
@@ -34,13 +37,17 @@ export abstract class OverlayWindow {
     const href = (this.preferences.debug_url || document.URL).split('/')
     this.log('::initialize', href)
 
+    // Grab the page type from the URL
     this.page = (<any>pageType)[href[5]]
 
+    // Grab the coverage reference (branch or PR ID) from the page
     const ref = this.acquireReference(this.page!, href)
     if (ref) {
       this.coverageID = ref
     }
 
+    // If we don't have coverage settings for this repo, search for .undercov.json
+    // and prompt the user to autoconfigure if it exists.
     if (this.repoName && !this.preferences.repos.find(repo => repo.repoName === this.repoName)) {
       this.checkForConfig(this.storage)
     }
@@ -50,6 +57,11 @@ export abstract class OverlayWindow {
     }
   }
 
+  /**
+   * Retrieve the coverage from the configured code coverage server.
+   * This also handles requesting Chrome permissions + redirecting to
+   * an authentication URL as needed.
+   */
   private retrieveCoverageObservable(id: string): Observable<JSON> {
     this.log('::retrieveCoverage', id)
     this.coverageAvailable = false
@@ -76,8 +88,15 @@ export abstract class OverlayWindow {
     }
 
     return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
+      .map((v: any) => Observable.of(v))
       .catch((err: any) => {
+        // We have to return Observables here because of async calls. These observables
+        // are merged into the original observable using concatAll.
+        //
+        // To make concatAll work in the happy case, we map to a nested observable above.
+        //
         if (err.status === 0 && url) {
+          // Request permissions if needed.
           const origin = new URL(url).origin + '/'
           this.log('::retrieveCoverage', `requesting permissions to ${origin}`)
 
@@ -91,6 +110,8 @@ export abstract class OverlayWindow {
             }
 
             this.log('::retrieveCoverage', `permissions granted to ${origin}`)
+
+            // Retry code coverage request.
             return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
               .catch((err: any) => {
                 this.redirectToAuthOrFail(repoOptions.authUrlTemplate, err)
@@ -98,6 +119,7 @@ export abstract class OverlayWindow {
               })
           })
         } else {
+          // We can reach the code coverage server, check if we need to auth.
           this.log('::retrieveCoverage', err)
           this.redirectToAuthOrFail(repoOptions.authUrlTemplate, err)
           return Observable.empty()
@@ -105,12 +127,16 @@ export abstract class OverlayWindow {
       }).concatAll()
   }
 
+  /**
+   * Redirect to the authentication URL if it's configured and we hit a 403.
+   */
   private redirectToAuthOrFail(authUrlTemplate: string, err: any) {
     if (!(authUrlTemplate && err.status === 403)) {
       return
     }
 
-    if (!window.location.href.endsWith('src=undercov')) {
+    // Prevent infinite redirects with a lil query param.
+    if (!window.location.href.endsWith('undercov=1')) {
       chrome.runtime.sendMessage({
         action: 'REQUEST_NOTIFICATION',
         options: {
@@ -120,7 +146,7 @@ export abstract class OverlayWindow {
           message: 'Redirecting to authenticate for coverage...'
         }
       })
-      const authUrl = authUrlTemplate.replace(/\$1/g, `${window.location.href}&src=undercov`)
+      const authUrl = authUrlTemplate.replace(/\$1/g, `${window.location.href}&undercov=1`)
       window.location.replace(authUrl)
     } else {
       chrome.runtime.sendMessage({
