@@ -20,6 +20,13 @@ On your next visit to the repo, you will be asked to approve permissions to retr
 
 ## Contributing
 
+To build the extension locally, ensure you have node 8+ installed, then install dependencies and build.
+
+```
+npm install
+npm run package
+```
+
 Please submit any feedback or bug reports as a GitHub issue. Thanks :)
 
 ## Features
