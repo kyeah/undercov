@@ -16,6 +16,8 @@ Visit the [chrome web extension page](https://chrome.google.com/webstore/detail/
 
 ![Undercov Button](github/imgs/undercov_button.png)
 
+On your next visit to the repo, you will be asked to approve permissions to retrieve coverage for this repo.
+
 ## Contributing
 
 Please submit any feedback or bug reports as a GitHub issue. Thanks :)

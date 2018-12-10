@@ -12,7 +12,8 @@ v1.0.2
 
 ## Fixed
 
-- Allow .undercov.json to be found when visiting the main repo page.
+- Show coverage when visiting the main repo page.
+- Find .undercov.json when visiting the main repo page.
 
 v1.0.1
 -------
