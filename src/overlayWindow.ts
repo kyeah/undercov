@@ -98,6 +98,7 @@ export abstract class OverlayWindow {
               })
           })
         } else {
+          this.log('::retrieveCoverage', err)
           this.redirectToAuthOrFail(repoOptions.authUrlTemplate, err)
           return Observable.empty()
         }
