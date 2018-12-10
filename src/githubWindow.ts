@@ -55,9 +55,7 @@ export default class GithubWindow extends OverlayWindow {
       }
 
       const filePath = href!.split('/').slice(5).join('/')
-
       const coverageMap = filePath && coverage && coverage[`${repoOptions.pathPrefix}${filePath}`]
-
       const td = document.createElement('td')
 
       if (coverageMap) {

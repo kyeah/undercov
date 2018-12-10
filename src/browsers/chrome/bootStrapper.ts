@@ -4,7 +4,8 @@ import { ChromeStorage } from './chromeStorage'
 import { IStorageObject } from '../../storageObject'
 
 /**
- * Initialize overlay window instance when document is loaded.
+ * Main entrypoint for all the things.
+ * This initializes the overlay window instance when the document is loaded.
  */
 class BootStrapper {
   private static preferences?: IStorageObject
@@ -16,6 +17,10 @@ class BootStrapper {
     this.initialize()
   }
 
+  /**
+   * Create the overlay if we're on Github, or
+   * autoconfigure the repo if we're on a raw file blob.
+   */
   private createOverlay(preferences: IStorageObject): void {
     const doc = document.getElementById('chrome-install-plugin')
     if (doc) {
@@ -24,15 +29,20 @@ class BootStrapper {
 
     this.url = preferences.debug_url || document.URL
 
+    // If we're on a raw file blob, see if we're looking at
+    // an .undercov.json config and autoload it if so.
     if (this.url.includes('raw.githubusercontent.com')) {
       this.configureRepo(preferences)
     }
 
-    if (!(this.url.indexOf('https://github.com') < 0)) {
+    if (this.url.indexOf('https://github.com') >= 0) {
       this.overlay = new GithubWindow(preferences, this.storage)
     }
   }
 
+  /**
+   * Ensure we have preferences loaded, then initialize the overlay.
+   */
   private initialize(): void {
     if (BootStrapper.preferences) {
       this.setupOverlay(BootStrapper.preferences)
@@ -48,6 +58,8 @@ class BootStrapper {
 
     this.createOverlay(preferences)
 
+    // Listen to Github's pjax events to indicate when we're moving to different
+    // pages and tabs (and need to reload coverage).
     window.addEventListener('message', (event: MessageEvent) => {
       if (event.source === window && event.data.type) {
         if (this.overlay && (event.data.type === 'undercov' || event.data.type === 'url_change')) {
@@ -57,13 +69,13 @@ class BootStrapper {
       }
     })
 
-    if (!(this.url.indexOf('https://github.com') < 0)) {
+    if (this.url.indexOf('https://github.com') >= 0) {
       this.injectListener()
     }
   }
 
   /**
-   * Inject listener script into document
+   * Inject a listener for Github's pjax requests.
    */
   private injectListener(): void {
     const listener = '(' + function() {
@@ -82,6 +94,10 @@ class BootStrapper {
     }
   }
 
+  /**
+   * Autoconfigure a repository's code coverage settings if
+   * We're looking at a raw JSON blob.
+   */
   private configureRepo(preferences: IStorageObject): void {
     let json
     try {
@@ -90,6 +106,7 @@ class BootStrapper {
       return
     }
 
+    // Return if we don't find one of the required keys.
     if (!json['branchUrlTemplate'] && !json['prUrlTemplate']) {
       return
     }
@@ -97,6 +114,7 @@ class BootStrapper {
     const split = document.URL.split('/')
     json.repoName = `${split[3]}/${split[4]}`
 
+    // Remove an old config if it already exists.
     for (let i = 0; i < preferences.repos.length; i++) {
       if (preferences.repos[i].repoName === json.repoName) {
         preferences.repos.splice(i, 1)
