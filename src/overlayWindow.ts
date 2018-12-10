@@ -86,41 +86,52 @@ export abstract class OverlayWindow {
           }).map(granted => {
             if (granted) {
               console.log('granted')
-              return this.retrieveCoverageObservable(id)
+              return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
+                .catch((err: any) => {
+                  this.redirectToAuthOrFail(repoOptions.authUrlTemplate, err)
+                  return Observable.empty()
+                })
             }
             console.log('not granted')
             return Observable.empty()
           })
-        } else if (repoOptions.authUrlTemplate && err.status === 403) {
-          if (!window.location.href.endsWith('src=undercov')) {
-            chrome.runtime.sendMessage({
-              action: 'REQUEST_NOTIFICATION',
-              options: {
-                type: 'basic',
-                iconUrl: 'resources/18dp.png',
-                title: 'undercov',
-                message: 'Redirecting to authenticate for coverage...'
-              }
-            })
-            const authUrl = repoOptions.authUrlTemplate.replace(/\$1/g, `${window.location.href}&src=undercov`)
-            window.location.replace(authUrl)
-            return Observable.empty()
-          } else {
-            console.log('failed, src=undercov')
-            chrome.runtime.sendMessage({
-              action: 'REQUEST_NOTIFICATION',
-              options: {
-                type: 'basic',
-                iconUrl: 'resources/18dp.png',
-                title: 'undercov',
-                message: 'Failed to auth for coverage in repo. Remove auth URL from undercov options to prevent autoreload.',
-                requireInteraction: true
-              }
-            })
-          }
+        } else {
+          this.redirectToAuthOrFail(repoOptions.authUrlTemplate, err)
+          return Observable.empty()
         }
-        return Observable.empty()
+      }).concatAll()
+  }
+
+  private redirectToAuthOrFail(authUrlTemplate: string, err: any) {
+    if (!(authUrlTemplate && err.status === 403)) {
+      return
+    }
+
+    if (!window.location.href.endsWith('src=undercov')) {
+      chrome.runtime.sendMessage({
+        action: 'REQUEST_NOTIFICATION',
+        options: {
+          type: 'basic',
+          iconUrl: 'resources/18dp.png',
+          title: 'undercov',
+          message: 'Redirecting to authenticate for coverage...'
+        }
       })
+      const authUrl = authUrlTemplate.replace(/\$1/g, `${window.location.href}&src=undercov`)
+      window.location.replace(authUrl)
+    } else {
+      console.log('failed, src=undercov')
+      chrome.runtime.sendMessage({
+        action: 'REQUEST_NOTIFICATION',
+        options: {
+          type: 'basic',
+          iconUrl: 'resources/18dp.png',
+          title: 'undercov',
+          message: 'Failed to auth for coverage in repo. Remove auth URL from undercov options to prevent autoreload.',
+          requireInteraction: true
+        }
+      })
+    }
   }
 
   private range(start: number, end: number): number[] {
