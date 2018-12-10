@@ -78,22 +78,24 @@ export abstract class OverlayWindow {
     return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
       .catch((err: any) => {
         if (err.status === 0 && url) {
-          const origin = new URL(url).origin
-          console.log('origin:', origin)
+          const origin = new URL(url).origin + '/'
+          this.log('::retrieveCoverage', `requesting permissions to ${origin}`)
+
           return Observable.fromCallback<any>(chrome.runtime.sendMessage)({
             action: 'REQUEST_PERMISSION',
-            origin: `${origin}/`
-          }).map(granted => {
-            if (granted) {
-              console.log('granted')
-              return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
-                .catch((err: any) => {
-                  this.redirectToAuthOrFail(repoOptions.authUrlTemplate, err)
-                  return Observable.empty()
-                })
+            origin: origin
+          }).map((granted) => {
+            if (!granted) {
+              this.log('::retrieveCoverage', `permissions denied to ${origin}`)
+              return Observable.empty()
             }
-            console.log('not granted')
-            return Observable.empty()
+
+            this.log('::retrieveCoverage', `permissions granted to ${origin}`)
+            return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
+              .catch((err: any) => {
+                this.redirectToAuthOrFail(repoOptions.authUrlTemplate, err)
+                return Observable.empty()
+              })
           })
         } else {
           this.redirectToAuthOrFail(repoOptions.authUrlTemplate, err)
@@ -120,7 +122,6 @@ export abstract class OverlayWindow {
       const authUrl = authUrlTemplate.replace(/\$1/g, `${window.location.href}&src=undercov`)
       window.location.replace(authUrl)
     } else {
-      console.log('failed, src=undercov')
       chrome.runtime.sendMessage({
         action: 'REQUEST_NOTIFICATION',
         options: {
