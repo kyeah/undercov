@@ -105,7 +105,6 @@ To semi-automate this, you can add an `.undercov.json` file to the root of your 
 
 - [ ] UI Options (enable line coverage overlay on the fileblob itself, similar to previous extensions)
 - [ ] Support for enterprise github
-- [ ] trim permissions and use chrome.permissions.request to request user-specified pages
 - [ ] travis/circleci integration
 
 ## Thanks
