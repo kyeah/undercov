@@ -2,11 +2,18 @@ import { pageType, lineType, OverlayWindow } from './overlayWindow'
 import { IStorageObject } from './storageObject'
 import { ISyncStorage } from './syncStorage'
 
+/**
+ * Overlay logic specific to the Github UI.
+ */
 export default class GithubWindow extends OverlayWindow {
   constructor(preferences: IStorageObject, storage: ISyncStorage) {
     super(preferences, storage)
   }
 
+  /**
+   * Look for an undercov JSON config file in the filetree and add a button
+   * to let the user know, if they don't already have the repo configured.
+   */
   protected checkForConfig(): void {
     for (const elem of $('.files .js-navigation-open')) {
       const href = elem.getAttribute('href')
@@ -38,6 +45,9 @@ export default class GithubWindow extends OverlayWindow {
     btnGroup.prepend(btn)
   }
 
+  /**
+   * Visualize file coverage percentage overlay on filetree pages.
+   */
   private visualizeOverallCoverage(coverage: JSON): void {
     const repoOptions = this.preferences.repos.find((repo) => repo.repoName === this.repoName)
     if (!repoOptions) {
@@ -77,6 +87,9 @@ export default class GithubWindow extends OverlayWindow {
     }
   }
 
+  /**
+   * Visualize line coverage on every file if we're on a blob or PR diff.
+   */
   private visualizeCoverage(coverage: JSON): void {
     const repoOptions = this.preferences.repos.find((repo) => repo.repoName === this.repoName)
     if (!repoOptions) {
@@ -87,6 +100,7 @@ export default class GithubWindow extends OverlayWindow {
     for (const elem of $('.repository-content .file')) {
       const element = $(elem)
 
+      // Search for the filename based on the page type
       let filePath
       if (this.page === pageType.blob) {
         const split = $('a[data-hotkey=y]').attr('href')!.split('/')
@@ -97,12 +111,15 @@ export default class GithubWindow extends OverlayWindow {
       }
       this.log('::visualizeCoverage', filePath)
 
+      // Search for a file coverage report
       const coverageMap = filePath && coverage && coverage[`${repoOptions.pathPrefix}${filePath}`]
       if (!coverageMap) {
         this.log('::visualizeCoverage', 'no coverage for file')
         continue
       }
 
+      // Add a button to the code coverage server, assuming
+      // there's an HTML report at the same location.
       const btnGroup = element.find('.file-actions > .BtnGroup')
       const btn = document.createElement('a')
       btn.className = 'btn btn-sm BtnGroup-item'
@@ -118,6 +135,7 @@ export default class GithubWindow extends OverlayWindow {
       btn.href = `${url.replace('coverage-final.json', '')}${filePath}.html`
       btnGroup.prepend(btn)
 
+      // Iterate over all lines in the file and visualize coverage
       const _td = `td:eq(${this.page === pageType.blob ? 0 : 1})`
 
       for (const trElement of element.find('tr:not(.js-expandable-line)')) {
@@ -144,17 +162,23 @@ export default class GithubWindow extends OverlayWindow {
     }
   }
 
+  /**
+   * Visualize coverage based on the page type.
+   */
   protected visualizeOverlay(coverage: JSON): void {
     this.log('::visualizeOverlay')
     $('.coveralls-removable').remove()
 
     switch (this.page) {
+      case undefined:
       case pageType.tree:
         if (this.preferences.filetreeCoverageEnabled) {
           const href = window.location.href
           let counter = 0
 
-          const fn = () => {
+          // the ultimate hack to get around GH's delayed page wipes/updates...
+          // continuously revisualize as needed.
+          const reloadOverallCoverage = () => {
             if (window.location.href !== href) {
               return
             }
@@ -163,15 +187,13 @@ export default class GithubWindow extends OverlayWindow {
               this.visualizeOverallCoverage(coverage)
             }
 
-            // the ultimate hack to get around GH's delayed page wipes/updates...
-            // continuously revisualize as needed.
             counter++
             if (counter < 4) {
-              setTimeout(fn, 1000)
+              setTimeout(reloadOverallCoverage, 1000)
             }
           }
 
-          fn()
+          reloadOverallCoverage()
         }
         break
       case pageType.blob:
@@ -181,6 +203,9 @@ export default class GithubWindow extends OverlayWindow {
     }
   }
 
+  /**
+   * Find the branch or PR ID based on the page type.
+   */
   protected acquireReference(page: pageType, value: string[]): string | void {
     this.log('::acquireReference ', 'pageType ' + pageType[page])
     this.repoName = undefined
@@ -191,6 +216,7 @@ export default class GithubWindow extends OverlayWindow {
       this.log('::acquireReference ', value[6])
       return value[6]
     } else if (page === undefined) {
+      // We're at the main page of the repo, return the branch from the branch selector.
       this.repoName = `${value[3]}/${value[4]}`
       this.log('::acquireReference ', $('.js-select-button').text())
       return $('.js-select-button').text()

@@ -171,14 +171,17 @@ export abstract class OverlayWindow {
   }
 
   private convertJsonFileCoverage(coverage: JSON): Object {
+    // Grab each statement location and the number of hits
     const statements = Object.keys(coverage['statementMap'])
       .map(i => [coverage['statementMap'][i], coverage['s'][i]])
 
+    // Grab each function location and the number of hits
     const fns = Object.keys(coverage['fnMap'])
       .map(i => [coverage['fnMap'][i].loc, coverage['f'][i]])
 
     let [statementsHit, totalStatements] = [0, 0]
 
+    // Calculate hit count for each line that is part of a statement or fn
     const res = [...statements, ...fns]
       .reduce((res: Object, [location, hits]) => {
         const start = location.start.line
@@ -201,6 +204,7 @@ export abstract class OverlayWindow {
 
     let [branchesHit, totalBranches] = [0, 0]
 
+    // Find lines with partial coverage
     Object.keys(coverage['branchMap'])
       .filter(i => coverage['branchMap'][i].type !== 'if')
       .map(i => this.zip(coverage['branchMap'][i].locations, coverage['b'][i]))
@@ -224,15 +228,34 @@ export abstract class OverlayWindow {
         }
       })
 
+    // Calculate basic stats for filetree coverage overlay
     res['statementCoverage'] = statementsHit / totalStatements * 100.0
     res['branchCoverage'] = branchesHit / totalBranches * 100.0
     res['overallCoverage'] = (statementsHit + branchesHit) / (totalStatements + totalBranches) * 100.0
     return res
   }
 
+  // Define converters from different file formats into our expected results model:
+  //
+  // {
+  //   "filename1" => {
+  //     1 => 5,  // hit
+  //     2 => 0,  // not hit
+  //     5 => -1, // partial hit
+  //     ...
+  //     "statementCoverage" => 96.1,
+  //     "branchCoverage"" => 95.2,
+  //     "overallCoverage" => 95.89
+  //   },
+  //   "filename2" => {
+  //     ...
+  //   },
+  //   ...
+  // }
   protected converters: { [key: string]: (coverage: JSON) => JSON; } = {
     'json': (coverage: JSON) => {
       const res: JSON = JSON.parse('{}')
+
       for (const filename in coverage) {
         if (coverage[filename]['statementMap']) {
           res[filename] = this.convertJsonFileCoverage(coverage[filename])
@@ -244,6 +267,10 @@ export abstract class OverlayWindow {
     }
   }
 
+  /**
+   * Read coverage from memory or retrieve it from the configured server.
+   * The internal memory is reset after every page load (real page load, not Github pjax change.)
+   */
   private readCoverageObservable(id: string): Observable<JSON> {
     const stored = this.coverage[id]
     if (stored) {

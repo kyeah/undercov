@@ -1,6 +1,9 @@
 import { IStorageObject, Repo, StorageObject } from '../../storageObject'
 import { ISyncStorage } from '../../syncStorage'
 
+/**
+ * Utility to encapsulate reading and writing to chrome options.
+ */
 export class ChromeStorage implements ISyncStorage {
   loadOption(callback: (preferences: IStorageObject) => void): void {
     chrome.storage.sync.get({

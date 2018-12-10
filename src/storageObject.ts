@@ -1,3 +1,6 @@
+/**
+ * Configurable options for each repo.
+ */
 export type Repo = {
   repoName: string,
   branchUrlTemplate: string,
@@ -6,6 +9,9 @@ export type Repo = {
   authUrlTemplate: string
 }
 
+/**
+ * Value object to encapsulate options.
+ */
 export interface IStorageObject {
   overlayEnabled: boolean
   debugEnabled: boolean

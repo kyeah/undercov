@@ -1,6 +1,9 @@
 import { IStorageObject } from '../../storageObject'
 import { ChromeStorage } from './chromeStorage'
 
+/**
+ * Controller for the options page.
+ */
 class Options {
   private static storage: ChromeStorage = new ChromeStorage()
 
@@ -66,7 +69,7 @@ class Options {
   }
 
   // Really obnoxious repo document elements creation below
-  // please forgive me
+  // please forgive me and never read this
 
   private createEmptyRepoElement(options: Options) {
     return () => {
