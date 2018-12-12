@@ -65,7 +65,7 @@ export default class GithubWindow extends OverlayWindow {
       }
 
       const filePath = href!.split('/').slice(5).join('/')
-      const coverageMap = filePath && coverage && coverage[`${repoOptions.pathPrefix}${filePath}`]
+      const coverageMap = filePath && coverage && coverage[`${filePath}`]
       const td = document.createElement('td')
 
       if (coverageMap) {
@@ -112,7 +112,7 @@ export default class GithubWindow extends OverlayWindow {
       this.log('::visualizeCoverage', filePath)
 
       // Search for a file coverage report
-      const coverageMap = filePath && coverage && coverage[`${repoOptions.pathPrefix}${filePath}`]
+      const coverageMap = filePath && coverage && coverage[`${filePath}`]
       if (!coverageMap) {
         this.log('::visualizeCoverage', 'no coverage for file')
         continue

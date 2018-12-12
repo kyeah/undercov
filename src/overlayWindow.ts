@@ -62,7 +62,7 @@ export abstract class OverlayWindow {
    * This also handles requesting Chrome permissions + redirecting to
    * an authentication URL as needed.
    */
-  private retrieveCoverageObservable(id: string): Observable<JSON> {
+  private retrieveCoverageObservable(id: string): Observable<any> {
     this.log('::retrieveCoverage', id)
     this.coverageAvailable = false
 
@@ -84,7 +84,7 @@ export abstract class OverlayWindow {
     let settings: JQueryAjaxSettings
     settings = {
       type: 'get',
-      dataType: 'json'
+      dataType: 'xml'
     }
 
     return Rx.Observable.fromPromise(Promise.resolve($.when($.ajax(url, settings))))
@@ -170,7 +170,7 @@ export abstract class OverlayWindow {
     return a.map((val, i) => [val, b[i]])
   }
 
-  private convertJsonFileCoverage(coverage: JSON): Object {
+  private convertJsonFileCoverage(coverage: any): Object {
     // Grab each statement location and the number of hits
     const statements = Object.keys(coverage['statementMap'])
       .map(i => [coverage['statementMap'][i], coverage['s'][i]])
@@ -252,8 +252,8 @@ export abstract class OverlayWindow {
   //   },
   //   ...
   // }
-  protected converters: { [key: string]: (coverage: JSON) => JSON; } = {
-    'json': (coverage: JSON) => {
+  protected converters: { [key: string]: (coverage: any) => JSON; } = {
+    'json': (coverage: any) => {
       const res: JSON = JSON.parse('{}')
 
       for (const filename in coverage) {
@@ -261,6 +261,84 @@ export abstract class OverlayWindow {
           res[filename] = this.convertJsonFileCoverage(coverage[filename])
         } else {
           this.log('::convert json - no statement map', filename)
+        }
+      }
+      return res
+    },
+    'cobertura': (coverage: any) => {
+      const res: JSON = JSON.parse('{}')
+
+      const coveragee = $(coverage).find('coverage')
+      res['branchCoverage'] = parseFloat(coveragee.attr('branch-rate')!) * 100
+      res['lineCoverage'] = parseFloat(coveragee.attr('line-rate')!) * 100
+      res['overallCoverage'] =
+        (parseInt(coveragee.attr('lines-covered')!) +
+          parseInt(coveragee.attr('branches-covered')!)) /
+        (parseInt(coveragee.attr('lines-valid')!) +
+          parseInt(coveragee.attr('branches-valid')!))
+
+      console.log(res)
+      console.log(coveragee)
+      console.log(coveragee.find('packages').find('package'))
+      for (const pkg of coveragee.find('packages').find('package')) {
+        const $pkg = $(pkg)
+        res[$pkg.attr('name')!] = {
+          lineCoverage: parseFloat($pkg.attr('line-rate')!) * 100,
+          branchCoverage: parseFloat($pkg.attr('branch-rate')!) * 100
+        }
+
+        const fileClasses = {}
+        for (const klass of $pkg.find('classes').find('class')) {
+          const $klass = $(klass)
+          const filename = $klass.attr('filename')!
+          if (!fileClasses[filename]) {
+            fileClasses[filename] = []
+          }
+          fileClasses[filename].push($klass)
+        }
+
+        for (const filename of Object.keys(fileClasses)) {
+          let [linesHit, totalLines] = [0, 0]
+          let [branchesHit, totalBranches] = [0, 0]
+
+          const klasses = fileClasses[filename]
+          console.log(klasses)
+          for (const klass of klasses) {
+            for (const line of klass.find('lines').find('line')) {
+              const $line = $(line)
+              const linee = $line.attr('number')
+              const hits = parseInt($line.attr('hits')!)
+              let partial = false
+
+              // todo: fix branch counts
+              if ($line.attr('branch') === 'true') {
+                totalBranches += 1
+                const conditionCoverage = $line.attr('condition-coverage')!
+                const [nbranchesHit, nbranches] = conditionCoverage.match(/\((.*)\)$/)![1].split('/').map(x => parseInt(x))
+                if (nbranchesHit !== nbranches && hits > 0) {
+                  partial = true
+                }
+                branchesHit += nbranchesHit
+                totalBranches += nbranches
+              }
+
+              if (!res[filename]) {
+                res[filename] = {}
+              }
+
+              totalLines += 1
+              if (hits > 0) {
+                linesHit += 1
+              }
+              res[filename][linee!] = partial ? -1 : hits
+            }
+
+            console.log(filename, linesHit, totalLines, branchesHit, totalBranches)
+            // Calculate basic stats for filetree coverage overlay
+            res[filename]['statementCoverage'] = linesHit / totalLines * 100.0
+            res[filename]['branchCoverage'] = branchesHit / totalBranches * 100.0
+            res[filename]['overallCoverage'] = (linesHit + branchesHit) / (totalLines + totalBranches) * 100.0
+          }
         }
       }
       return res
@@ -278,7 +356,7 @@ export abstract class OverlayWindow {
     }
 
     return this.retrieveCoverageObservable(id)
-      .map(coverage => coverage && this.converters['json'](coverage))
+      .map(coverage => coverage && this.converters['cobertura'](coverage))
   }
 
   protected invalidateOverlay(): void {
