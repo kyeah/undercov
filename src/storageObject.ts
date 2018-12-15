@@ -6,7 +6,8 @@ export type Repo = {
   branchUrlTemplate: string,
   prUrlTemplate: string,
   pathPrefix: string,
-  authUrlTemplate: string
+  authUrlTemplate: string,
+  filetype: string
 }
 
 /**

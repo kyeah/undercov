@@ -26,7 +26,8 @@ class Options {
           repo.branchUrlTemplate,
           repo.prUrlTemplate,
           repo.pathPrefix,
-          repo.authUrlTemplate
+          repo.authUrlTemplate,
+          repo.filetype
         )
       }
     })
@@ -51,7 +52,8 @@ class Options {
         branchUrlTemplate: (<HTMLInputElement>repo.querySelector('#branch')).value,
         prUrlTemplate: (<HTMLInputElement>repo.querySelector('#pr')).value,
         pathPrefix: (<HTMLInputElement>repo.querySelector('#path-prefix')).value,
-        authUrlTemplate: (<HTMLInputElement>repo.querySelector('#auth')).value
+        authUrlTemplate: (<HTMLInputElement>repo.querySelector('#auth')).value,
+        filetype: (<HTMLSelectElement>repo.querySelector('#filetype')).selectedOptions[0].value
       })
     }
 
@@ -83,7 +85,8 @@ class Options {
     branchUrlTemplate: string = '',
     prUrlTemplate: string = '',
     pathPrefix: string = '',
-    authUrlTemplate: string = ''
+    authUrlTemplate: string = '',
+    filetype: string = 'json'
   ) {
     const mainDiv = document.createElement('div')
     mainDiv.style.padding = '3px 10px'
@@ -107,6 +110,9 @@ class Options {
     innerDiv.appendChild(document.createElement('br'))
 
     innerDiv.appendChild(options.pathPrefixElement(pathPrefix))
+    innerDiv.appendChild(document.createElement('br'))
+
+    innerDiv.appendChild(options.filetypeElement(filetype))
 
     mainDiv.appendChild(options.repoNameElement(repoName))
     mainDiv.appendChild(removeButton)
@@ -140,6 +146,35 @@ class Options {
 
     const labelElement = window.document.createElement('label')
     labelElement.textContent = label
+    labelElement.style.display = 'block'
+
+    const div = window.document.createElement('div')
+    div.appendChild(labelElement)
+    div.appendChild(input)
+    return div
+  }
+
+  private filetypeElement(value: string): HTMLDivElement {
+    const input = window.document.createElement('select')
+    input.name = 'filetype'
+    input.id = 'filetype'
+    input.style.display = 'block'
+
+    const filetypes = ['json', 'cobertura']
+    for (const filetype of filetypes) {
+      const option = window.document.createElement('option')
+      option.value = filetype
+      option.textContent = filetype
+
+      if (value === filetype) {
+        option.selected = true
+      }
+
+      input.appendChild(option)
+    }
+
+    const labelElement = window.document.createElement('label')
+    labelElement.textContent = 'Coverage filetype'
     labelElement.style.display = 'block'
 
     const div = window.document.createElement('div')
