@@ -277,9 +277,6 @@ export abstract class OverlayWindow {
         (parseInt(coveragee.attr('lines-valid')!) +
           parseInt(coveragee.attr('branches-valid')!))
 
-      console.log(res)
-      console.log(coveragee)
-      console.log(coveragee.find('packages').find('package'))
       for (const pkg of coveragee.find('packages').find('package')) {
         const $pkg = $(pkg)
         res[$pkg.attr('name')!] = {
@@ -302,7 +299,7 @@ export abstract class OverlayWindow {
           let [branchesHit, totalBranches] = [0, 0]
 
           const klasses = fileClasses[filename]
-          console.log(klasses)
+          console.log(filename)
           for (const klass of klasses) {
             for (const line of klass.find('lines').find('line')) {
               const $line = $(line)
@@ -356,7 +353,14 @@ export abstract class OverlayWindow {
     }
 
     return this.retrieveCoverageObservable(id)
-      .map(coverage => coverage && this.converters['cobertura'](coverage))
+      .map(coverage => {
+        if (!coverage) {
+          return coverage
+        }
+
+        const repoOptions = this.preferences.repos.find((repo) => repo.repoName === this.repoName)
+        return this.converters[repoOptions!.filetype](coverage)
+      })
   }
 
   protected invalidateOverlay(): void {

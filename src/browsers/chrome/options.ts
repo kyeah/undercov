@@ -26,6 +26,7 @@ class Options {
           repo.branchUrlTemplate,
           repo.prUrlTemplate,
           repo.pathPrefix,
+          repo.githubPathPrefix,
           repo.authUrlTemplate,
           repo.filetype
         )
@@ -52,6 +53,7 @@ class Options {
         branchUrlTemplate: (<HTMLInputElement>repo.querySelector('#branch')).value,
         prUrlTemplate: (<HTMLInputElement>repo.querySelector('#pr')).value,
         pathPrefix: (<HTMLInputElement>repo.querySelector('#path-prefix')).value,
+        githubPathPrefix: (<HTMLInputElement>repo.querySelector('#github-path-prefix')).value,
         authUrlTemplate: (<HTMLInputElement>repo.querySelector('#auth')).value,
         filetype: (<HTMLSelectElement>repo.querySelector('#filetype')).selectedOptions[0].value
       })
@@ -85,6 +87,7 @@ class Options {
     branchUrlTemplate: string = '',
     prUrlTemplate: string = '',
     pathPrefix: string = '',
+    githubPathPrefix: string = '',
     authUrlTemplate: string = '',
     filetype: string = 'json'
   ) {
@@ -110,6 +113,9 @@ class Options {
     innerDiv.appendChild(document.createElement('br'))
 
     innerDiv.appendChild(options.pathPrefixElement(pathPrefix))
+    innerDiv.appendChild(document.createElement('br'))
+
+    innerDiv.appendChild(options.githubPathPrefixElement(githubPathPrefix))
     innerDiv.appendChild(document.createElement('br'))
 
     innerDiv.appendChild(options.filetypeElement(filetype))
@@ -214,7 +220,16 @@ class Options {
     return this.textElement(
       'path-prefix',
       '/container/',
-      'Path prefix for coverage files',
+      'Remove path prefix from coverage filenames',
+      value
+    )
+  }
+
+  private githubPathPrefixElement(value: string): HTMLDivElement {
+    return this.textElement(
+      'github-path-prefix',
+      'src/main/scala/',
+      'Remove path prefix from github filenames',
       value
     )
   }
