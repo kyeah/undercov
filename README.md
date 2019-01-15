@@ -1,6 +1,6 @@
 # undercov
 
-![https://chrome.google.com/webstore/detail/undercov/ekoclfpkmghpgojlgjcfikppfpalhnnl](https://img.shields.io/chrome-web-store/v/ekoclfpkmghpgojlgjcfikppfpalhnnl.svg)
+[![](https://img.shields.io/chrome-web-store/v/ekoclfpkmghpgojlgjcfikppfpalhnnl.svg)](https://chrome.google.com/webstore/detail/undercov/ekoclfpkmghpgojlgjcfikppfpalhnnl)
 
 A Chrome extension to overlay code coverage reports from arbitrary HTTPS sources onto Github projects. 
 
